@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hyprland Video Wallpapers Demo</title>
+<style>
+    body {
+        background-color: #1e1e2e;
+        color: #cdd6f4;
+        font-family: "Fira Code", monospace;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        margin: 0;
+    }
+    h1 {
+        color: #89b4fa;
+        margin-bottom: 1rem;
+    }
+    p {
+        color: #cdd6f4;
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+    video {
+        border: 2px solid #89b4fa;
+        border-radius: 8px;
+        max-width: 90%;
+        height: auto;
+    }
+    a.button {
+        margin-top: 1rem;
+        display: inline-block;
+        padding: 0.6rem 1.2rem;
+        background-color: #89b4fa;
+        color: #1e1e2e;
+        text-decoration: none;
+        font-weight: bold;
+        border-radius: 6px;
+        transition: background 0.2s ease;
+    }
+    a.button:hover {
+        background-color: #74aee9;
+    }
+</style>
+</head>
+<body>
+
+<h1>Hyprland Video Wallpapers</h1>
+<p>Per-workspace video wallpapers with pseudo-tiling window management.<br>
+Click play below to preview the full 90-second demonstration.</p>
+
+<video controls autoplay loop muted>
+  <source src="preview/preview.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+<a class="button" href="preview/preview.mp4" target="_blank">Open Video in New Tab</a>
+
+<p><i>Note: Not recommended for low-spec systems. 16GB RAM minimum is strongly advised.</i></p>
+
+</body>
+</html>
