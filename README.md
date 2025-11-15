@@ -14,8 +14,6 @@
 
 ---
 
-## Preview
-
 <p align="center">
 <img src="docs/preview/preview.gif" alt="Preview GIF">
 </p>
