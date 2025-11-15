@@ -1,7 +1,5 @@
 <div align="center">
 
-# Hyprland Video Wallpapers
-
 <img src="logo.svg" width="540" alt="HyprVideo logo" />
 
 **Per-workspace video wallpapers with pseudo-tiling window management**
