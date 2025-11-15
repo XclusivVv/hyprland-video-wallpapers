@@ -1,36 +1,35 @@
+<div align="center">
+
 # Hyprland Video Wallpapers
 
-<p align="center">
-  <img src="logo.svg" width="180" alt="HyprVideo logo" />
-</p>
+<img src="logo.svg" width="540" alt="HyprVideo logo" />
 
-<p align="center">
-  <strong>Per-workspace video wallpapers with pseudo-tiling window management</strong>
-</p>
+**Per-workspace video wallpapers with pseudo-tiling window management**
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Shell_Script-Bash-4EAA25?logo=gnu-bash&logoColor=white" alt="bash" />
-  <img src="https://img.shields.io/badge/Hyprland-Compatible-00A0FF?logo=wayland&logoColor=white" alt="hyprland" />
-  <img src="https://img.shields.io/badge/MPV-Video_Backgrounds-6A0DAD?logo=mpv&logoColor=white" alt="mpv" />
-  <img src="https://img.shields.io/github/license/XclusivVv/hyprland-video-wallpapers" alt="license" />
-  <img src="https://img.shields.io/github/last-commit/XclusivVv/hyprland-video-wallpapers" alt="last commit" />
-</p>
+<img src="https://img.shields.io/badge/Shell_Script-Bash-4EAA25?logo=gnu-bash&logoColor=white" alt="bash" />
+<img src="https://img.shields.io/badge/Hyprland-Compatible-00A0FF?logo=wayland&logoColor=white" alt="hyprland" />
+<img src="https://img.shields.io/badge/MPV-Video_Backgrounds-6A0DAD?logo=mpv&logoColor=white" alt="mpv" />
+<img src="https://img.shields.io/github/license/XclusivVv/hyprland-video-wallpapers" alt="license" />
+<img src="https://img.shields.io/github/last-commit/XclusivVv/hyprland-video-wallpapers" alt="last commit" />
+
+</div>
 
 ---
 
 ## Preview
 
-**Live demo (full experience & autoplay)**:  
-👉 [Open interactive demo (GitHub Pages)](https://xclusivvv.github.io/hyprland-video-wallpapers/)
-
-**Quick preview** (click to open MP4 directly):  
-[![Preview thumbnail](docs/preview/thumbnail.png)](docs/preview/preview.mp4)
+<p align="center">
+  <video controls autoplay loop muted style="max-width: 90%; border: 2px solid #89b4fa; border-radius: 8px;">
+    <source src="docs/preview/preview.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+</p>
 
 <p align="center"><i>Note: Not recommended for low-spec systems. 16GB RAM minimum is strongly advised.</i></p>
 
 ---
 
-## Quick start (Arch Linux)
+## Quick Start (Arch Linux)
 
 ```bash
 git clone https://github.com/XclusivVv/hyprland-video-wallpapers.git
@@ -45,13 +44,13 @@ chmod +x install.sh
 ## What the installer does
 
 - Verifies `hyprctl` exists (warns if not).  
-- Installs runtime deps (`mpv`, `socat`, `jq`) via pacman if available.  
+- Installs runtime dependencies (`mpv`, `socat`, `jq`) via pacman if available.  
 - Copies `hyprland-video-wallpapers.sh` to `~/.local/bin/hyprland-video-wallpapers`.  
 - Copies config `hyprland-video-wallpapers.conf` to `~/.config/hypr/`.  
 - Creates autostart fragment `~/.config/hypr/workspace-video-autostart.conf`.  
 - Optionally comments out `togglefloating` in `keybinds.conf` to prevent conflicts.  
 
-> Does **not** install Hyprland itself — works with any variant (`hyprland`, `hyprland-git`, etc.).
+> Works with any Hyprland variant (`hyprland`, `hyprland-git`, etc.).
 
 ---
 
@@ -62,8 +61,6 @@ Add **only this line** to your `hyprland.conf`:
 ```conf
 source = ~/.config/hypr/hyprland-video-wallpapers.conf
 ```
-
-All workspace layouts, master layout settings, and window rules are included in the config file.
 
 ---
 
@@ -81,6 +78,10 @@ VIDEO_MAP=(
 GAP_SIZE=5
 TOP_GAP=15
 ```
+
+---
+
+## Usage
 
 Run:
 
@@ -101,42 +102,6 @@ pkill -f hyprland-video-wallpapers.sh
 - MPV is promoted to master tile and pushed to the bottom of the tiled layer (`alterzorder bottom`).  
 - All other apps float and are pseudo-tiled via exact geometry dispatchers.  
 - Ensures stable video backgrounds per workspace while other apps float on top.  
-
----
-
-## Files included
-
-- `hyprland-video-wallpapers.sh` — main script  
-- `install.sh` — installer  
-- `hyprland-video-wallpapers.conf` — configuration file  
-- `logo.svg` — project logo  
-- `docs/index.html` — GitHub Pages demo  
-- `docs/preview/preview.mp4` — demo video  
-- `docs/preview/thumbnail.png` — thumbnail for README  
-
----
-
-## Creating the thumbnail (optional)
-
-```bash
-mkdir -p docs/preview
-ffmpeg -ss 00:00:05 -i docs/preview/preview.mp4 -frames:v 1 -q:v 2 docs/preview/thumbnail.png
-```
-
----
-
-## GitHub Pages demo
-
-```
-https://xclusivvv.github.io/hyprland-video-wallpapers/
-```
-
----
-
-## Troubleshooting
-
-- `hyprctl` not found → Hyprland not installed or not in PATH.  
-- MPV not appearing → confirm window title matches `mpv-workspace-video-<ws>` in the script.  
 
 ---
 
