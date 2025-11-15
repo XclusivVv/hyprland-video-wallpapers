@@ -20,6 +20,9 @@
         color: #89b4fa;
         margin-bottom: 1rem;
     }
+    img.logo {
+        margin-bottom: 1rem;
+    }
     video {
         border: 2px solid #89b4fa;
         border-radius: 8px;
@@ -27,31 +30,37 @@
         height: auto;
         margin-bottom: 1rem;
     }
-    p {
+    h2 {
+        color: #89b4fa;
+        margin-top: 2rem;
         margin-bottom: 1rem;
     }
-    a.button {
-        display: inline-block;
-        padding: 0.6rem 1.2rem;
-        background-color: #89b4fa;
-        color: #1e1e2e;
-        text-decoration: none;
-        font-weight: bold;
+    pre, code {
+        background-color: #313244;
+        color: #cdd6f4;
+        padding: 0.5rem;
         border-radius: 6px;
-        transition: background 0.2s ease;
+        overflow-x: auto;
     }
-    a.button:hover {
-        background-color: #74aee9;
+    p {
+        margin-bottom: 1rem;
+        line-height: 1.5;
+    }
+    .badge img {
+        margin: 0 4px;
+    }
+    i {
+        color: #89b4fa;
     }
 </style>
 </head>
 <body>
 
 <h1>Hyprland Video Wallpapers</h1>
-<img src="../logo.svg" width="540" alt="HyprVideo logo">
+<img class="logo" src="../logo.svg" width="540" alt="HyprVideo logo">
 <p><strong>Per-workspace video wallpapers with pseudo-tiling window management</strong></p>
 
-<p>
+<p class="badge">
 <img src="https://img.shields.io/badge/Shell_Script-Bash-4EAA25?logo=gnu-bash&logoColor=white" alt="bash" />
 <img src="https://img.shields.io/badge/Hyprland-Compatible-00A0FF?logo=wayland&logoColor=white" alt="hyprland" />
 <img src="https://img.shields.io/badge/MPV-Video_Backgrounds-6A0DAD?logo=mpv&logoColor=white" alt="mpv" />
@@ -66,6 +75,56 @@
 </video>
 
 <p><i>Note: Not recommended for low-spec systems. 16GB RAM minimum is strongly advised.</i></p>
+
+<h2>Quick Start (Arch Linux)</h2>
+<pre><code>git clone https://github.com/XclusivVv/hyprland-video-wallpapers.git
+cd hyprland-video-wallpapers
+
+chmod +x install.sh
+./install.sh</code></pre>
+
+<h2>What the installer does</h2>
+<ul>
+    <li>Verifies <code>hyprctl</code> exists (warns if not).</li>
+    <li>Installs runtime dependencies (<code>mpv</code>, <code>socat</code>, <code>jq</code>) via pacman if available.</li>
+    <li>Copies <code>hyprland-video-wallpapers.sh</code> to <code>~/.local/bin/hyprland-video-wallpapers</code>.</li>
+    <li>Copies config <code>hyprland-video-wallpapers.conf</code> to <code>~/.config/hypr/</code>.</li>
+    <li>Creates autostart fragment <code>~/.config/hypr/workspace-video-autostart.conf</code>.</li>
+    <li>Optionally comments out <code>togglefloating</code> in <code>keybinds.conf</code> to prevent conflicts.</li>
+</ul>
+
+<p>Works with any Hyprland variant (<code>hyprland</code>, <code>hyprland-git</code>, etc.).</p>
+
+<h2>Hyprland configuration</h2>
+<pre><code>source = ~/.config/hypr/hyprland-video-wallpapers.conf</code></pre>
+
+<h2>Script configuration</h2>
+<pre><code>VIDEO_MAP=(
+  "1:/home/you/videos/video1.mp4"
+  "2:/home/you/videos/video2.mp4"
+  # ...
+)
+
+GAP_SIZE=5
+TOP_GAP=15
+</code></pre>
+
+<h2>Usage</h2>
+<pre><code>~/.local/bin/hyprland-video-wallpapers &
+
+pkill -f hyprland-video-wallpapers.sh</code></pre>
+
+<h2>How it works</h2>
+<ul>
+    <li>MPV is promoted to master tile and pushed to the bottom of the tiled layer (<code>alterzorder bottom</code>).</li>
+    <li>All other apps float and are pseudo-tiled via exact geometry dispatchers.</li>
+    <li>Ensures stable video backgrounds per workspace while other apps float on top.</li>
+</ul>
+
+<h2>License</h2>
+<p>MIT — see <code>LICENSE</code>.</p>
+
+<p><i>_PS: This was a struggle._</i></p>
 
 </body>
 </html>
