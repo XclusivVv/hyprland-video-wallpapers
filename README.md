@@ -17,7 +17,7 @@
 ## Preview
 
 <p align="center">
-[![Preview GIF](docs/preview/preview.gif)](docs/preview/preview.mp4)
+![Preview GIF](docs/preview/preview.gif)
 </p>
 
 <p align="center"><i>Note: Not recommended for low-spec systems. 16GB RAM minimum is strongly advised.</i></p>
