@@ -14,24 +14,23 @@
         align-items: center;
         padding: 2rem;
         margin: 0;
+        text-align: center;
     }
     h1 {
         color: #89b4fa;
         margin-bottom: 1rem;
-    }
-    p {
-        color: #cdd6f4;
-        margin-bottom: 2rem;
-        text-align: center;
     }
     video {
         border: 2px solid #89b4fa;
         border-radius: 8px;
         max-width: 90%;
         height: auto;
+        margin-bottom: 1rem;
+    }
+    p {
+        margin-bottom: 1rem;
     }
     a.button {
-        margin-top: 1rem;
         display: inline-block;
         padding: 0.6rem 1.2rem;
         background-color: #89b4fa;
@@ -49,15 +48,22 @@
 <body>
 
 <h1>Hyprland Video Wallpapers</h1>
-<p>Per-workspace video wallpapers with pseudo-tiling window management.<br>
-Click play below to preview the full 90-second demonstration.</p>
+<img src="../logo.svg" width="540" alt="HyprVideo logo">
+<p><strong>Per-workspace video wallpapers with pseudo-tiling window management</strong></p>
 
+<p>
+<img src="https://img.shields.io/badge/Shell_Script-Bash-4EAA25?logo=gnu-bash&logoColor=white" alt="bash" />
+<img src="https://img.shields.io/badge/Hyprland-Compatible-00A0FF?logo=wayland&logoColor=white" alt="hyprland" />
+<img src="https://img.shields.io/badge/MPV-Video_Backgrounds-6A0DAD?logo=mpv&logoColor=white" alt="mpv" />
+<img src="https://img.shields.io/github/license/XclusivVv/hyprland-video-wallpapers" alt="license" />
+<img src="https://img.shields.io/github/last-commit/XclusivVv/hyprland-video-wallpapers" alt="last commit" />
+</p>
+
+<h2>Preview</h2>
 <video controls autoplay loop muted>
-  <source src="preview/preview.mp4" type="video/mp4">
-  Your browser does not support the video tag.
+    <source src="preview/preview.mp4" type="video/mp4">
+    Your browser does not support the video tag.
 </video>
-
-<a class="button" href="preview/preview.mp4" target="_blank">Open Video in New Tab</a>
 
 <p><i>Note: Not recommended for low-spec systems. 16GB RAM minimum is strongly advised.</i></p>
 

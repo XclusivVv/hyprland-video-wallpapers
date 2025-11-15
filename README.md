@@ -17,10 +17,7 @@
 ## Preview
 
 <p align="center">
-  <video controls autoplay loop muted style="max-width: 90%; border: 2px solid #89b4fa; border-radius: 8px;">
-    <source src="docs/preview/preview.mp4" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+[![Preview GIF](docs/preview/preview.gif)](docs/preview/preview.mp4)
 </p>
 
 <p align="center"><i>Note: Not recommended for low-spec systems. 16GB RAM minimum is strongly advised.</i></p>
