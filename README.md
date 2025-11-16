@@ -1,3 +1,5 @@
+# Hyprland Video Wallpapers
+
 ![Centered Image](/assets/logo.png){: .center}
 
 <div align="center">
@@ -18,43 +20,43 @@
 
 ## Overview
 
-Transform your Hyprland desktop with **per-workspace video wallpapers**. Each workspace can have its own unique animated background, automatically pausing when you switch workspaces. Windows are intelligently arranged in a pseudo-tiling layout above the wallpaper.
+Transform your Hyprland desktop with **per-workspace video wallpapers**. Each workspace gets its own animated background that automatically pauses when switching away. Windows are arranged intelligently in a pseudo-tiling layout above the wallpaper.
 
-**Note:** 16GB RAM minimum is recommended. Videos should be optimized (H.265, ~5–10MB).
+**Note:** 16GB RAM is recommended. Videos should be optimized (H.265, ~5–10MB).
 
 ---
 
 ## ✨ Features
 
 ### 🎨 Multiple Wallpapers
-- Assign different video wallpapers to each workspace (1–10)
-- 50+ pre-optimized sample wallpapers included
-- Automatic play/pause when switching workspaces
-- Supports MP4 and MKV formats
+- Assign unique wallpapers to workspaces 1–10  
+- 50+ pre-optimized wallpapers included  
+- Automatic play/pause when switching  
+- Supports MP4 and MKV  
 
 ### 🧙 Interactive Installation Wizard
-- Modern, colorful TUI-based flow
-- Auto-detection of Hyprland and dependencies
-- Sample video selector and preview list
-- Express or Custom setup modes
-- Optional autostart
+- Modern, colorful TUI-based setup  
+- Auto-detects Hyprland and dependencies  
+- Sample video browser  
+- Express + Custom modes  
+- Optional autostart  
 
 ### ⚙️ Smart Window Management
-- Wallpaper handled by per-workspace MPV instances
-- MPV windows pushed to bottom z-layer
-- Other windows arranged in pseudo-tiling layout
-- Configurable top gaps and window gaps
+- One MPV instance per workspace  
+- Wallpaper windows set to lowest z-layer  
+- Apps arranged in pseudo-tiling layout  
+- Adjustable gaps  
 
 ### 🎬 Pre-Optimized Wallpapers
-- 50+ anime, abstract, nature, and tech wallpapers
-- H.265 codec for high quality + small size
-- Typically 2–25MB each
+- 50+ anime, abstract, nature, and tech clips  
+- H.265 encoding for small size  
+- Files typically 2–25MB  
 
 ### 🚀 Easy Management
-- Enable autostart
-- Start/stop manually
-- Re-run installer anytime
-- Full uninstaller that reverts changes
+- Enable autostart  
+- Start/stop anytime  
+- Re-run installer safely  
+- Full uninstaller that reverts changes  
 
 ---
 
@@ -66,68 +68,78 @@ Transform your Hyprland desktop with **per-workspace video wallpapers**. Each wo
     chmod +x install.sh uninstall.sh
     ./install.sh
 
-The installer will walk you through everything interactively.
+The installer guides you through everything interactively.
 
 ---
 
 ## 📋 Requirements
 
-The installer checks and installs these automatically on Arch-based systems:
+The installer checks (and installs on Arch systems):
 
-- Hyprland
-- mpv
-- socat
-- jq
-- git (optional, needed for auto-installing the optimizer tool)
+- Hyprland  
+- mpv  
+- socat  
+- jq  
+- git (optional, needed for optimizer auto-install)
 
 ---
 
 ## 🎯 Installation Process
 
-### 1. Choose Setup Mode
-- **Express Mode:**  
-  5 workspaces  
-  30px top gap  
-  15px window gaps  
-- **Custom Mode:**  
-  Fine-tune every setting.
+The installation wizard is fully interactive and visually-guided. Here is the flow:
 
-### 2. Select Video Source
-Choose between:
-- **Included sample wallpapers**
-- **Your own video files**
+### 1. Select Setup Mode
+- **Express Mode**  
+  Automatically applies:
+  - 5 workspaces  
+  - 30px top gap  
+  - 15px window gap  
 
-### 3. Assign Wallpapers per Workspace
-Installer shows thumbnail filenames and sizes.
+- **Custom Mode**  
+  Lets you configure every option manually.
 
-### 4. Review Configuration
-Verify gaps, videos, workspaces, and autostart settings.
+### 2. Pick Your Video Source
+You may choose between:
+- **Included sample wallpapers** (preview list provided)  
+- **Your own video files** (multiple formats supported)  
 
-### 5. Autostart (Optional)
-Installer adds entries to:
-- exec-once  
-- Hyprland source config
+### 3. Assign Wallpapers Per Workspace
+- Each workspace will show a list of videos  
+- File sizes and names are displayed  
+- Only selected workspaces get wallpapers
 
-### 6. Start Immediately (Optional)
-Start wallpapers right away after installation.
+### 4. Confirm Your Settings
+A summary page displays:
+- Selected videos  
+- Workspace count  
+- Gap values  
+- Autostart preference  
+
+### 5. Autostart Configuration (Optional)
+Enabling autostart adds:
+- A Hyprland `exec-once` entry  
+- A sourced config snippet
+
+### 6. Launch Immediately (Optional)
+Wallpaper animation starts as soon as installation completes.
 
 ---
 
 ## 🎬 Sample Videos Included
 
-A curated library of 50+ wallpapers located in `sample_videos/`.
+This project ships with **50+ fully optimized videos**, available in the `sample_videos/` directory. All videos are encoded with **H.265**, typically **2–26MB** each, and grouped by theme.
 
 ### Anime & Action
-Examples:
-- black-panther_optimized.mp4
-- goku-lofi_optimized.mp4
-- kakashi_optimized.mp4
-- itachi-red_optimized.mp4
-- tekken-7_optimized.mp4
-- venom-marvel_optimized.mp4
+Examples include:
+- black-panther_optimized.mp4  
+- goku-lofi_optimized.mp4  
+- kakashi_optimized.mp4  
+- itachi-red_optimized.mp4  
+- tekken-7_optimized.mp4  
+- venom-marvel_optimized.mp4  
 
 ### Abstract & Visual
-Examples:
+Examples include:
 - burning_optimized.mp4  
 - kaleidoscope_optimized.mp4  
 - hypnotic_optimized.mp4  
@@ -135,20 +147,20 @@ Examples:
 - vaporwave_optimized.mp4  
 
 ### Nature & Atmospheric
-Examples:
+Examples include:
 - galaxy_optimized.mp4  
 - butterflies_optimized.mp4  
 - torii-waterfall_optimized.mp4  
 - meteorite-falling_optimized.mp4  
 
-Files are compressed to 2–26MB using H.265.
+These serve as ready-to-use wallpapers or templates to optimize your own videos.
 
 ---
 
 ## 🎮 Usage
 
 ### Autostart
-If enabled during installation, reload Hyprland:
+If enabled, reload Hyprland:
 
     Super + Shift + R
 
@@ -156,7 +168,7 @@ If enabled during installation, reload Hyprland:
 
     ~/.local/bin/hyprland-video-wallpapers.sh &
 
-Or run in the foreground:
+Foreground mode:
 
     ~/.local/bin/hyprland-video-wallpapers.sh
 
@@ -168,25 +180,22 @@ Or run in the foreground:
 
     ./install.sh
 
-This updates your configuration safely without deleting the existing one.
+Safely updates configuration without deleting existing values.
 
 ---
 
 ## ⚙️ Configuration
 
-Stored in:
+Config files live at:
 
-    ~/.config/hyprland-video-wallpapers/config.conf
-
-You may edit this manually, but running the installer again is recommended.
-
-### Installed Files
-
-    ~/.local/bin/hyprland-video-wallpapers.sh
     ~/.config/hyprland-video-wallpapers/config.conf
     ~/.config/hyprland-video-wallpapers/hyprland-video-wallpapers.conf
 
-### Hyprland Integration (set automatically)
+Installed script:
+
+    ~/.local/bin/hyprland-video-wallpapers.sh
+
+### Auto-Generated Hyprland Entries
 
     source = ~/.config/hyprland-video-wallpapers/hyprland-video-wallpapers.conf
     exec-once = ~/.local/bin/hyprland-video-wallpapers.sh
@@ -197,35 +206,33 @@ You may edit this manually, but running the installer again is recommended.
 
     ./uninstall.sh
 
-This will:
-- Kill all wallpaper processes  
-- Remove exec-once entries  
-- Remove source lines  
-- Restore original keybinds if modified  
-- Delete config and installed files  
-- Clean up temporary sockets  
+This removes:
+- Running wallpaper processes  
+- Autostart entries  
+- Sourced config lines  
+- Installed scripts & configs  
+- Temporary IPC sockets  
 
-Your Hyprland setup remains intact.
+Hyprland remains unchanged.
 
 ---
 
 ## 🔧 How It Works
 
-### Per-Workspace Wallpapers
-- Each workspace gets its own MPV instance
-- MPV windows sit behind all other windows
-- Only the active workspace's video plays
+### Per-Workspace MPV Instances
+- A dedicated MPV runs for each workspace  
+- Only the active workspace's video plays  
+- Others pause automatically  
 
-### Intelligent Window Layout
-- Script listens to Hyprland events  
-- New windows float automatically  
-- Windows arranged in pseudo-tiling  
-- Never overlap the wallpaper MPV window
+### Smart Window Layout
+- New windows float by default  
+- Script arranges windows in a pseudo-tiling grid  
+- Wallpaper window is always behind user windows  
 
 ### Event Listener
-The script reacts to:
+Responds to:
 - Workspace changes  
-- Window open/close events  
+- Window creation/destruction  
 - Monitor focus changes  
 
 ---
@@ -233,67 +240,65 @@ The script reacts to:
 ## 💡 Performance Tips
 
 ### Optimize Videos
-Use:
+Use the optimizer:
 
     hyprland-video-optimizer
 
-Recommended specs:
+Recommended settings:
 - Codec: H.265  
 - Bitrate: 500–1500 kbps  
-- Target size: 5–10MB  
-- Match your monitor resolution  
+- Resolution matching your display  
+- 5–10MB ideal per wallpaper  
 
-### Hardware Recommendations
-- **Minimum:** 8GB RAM  
-- **Recommended:** 16GB RAM  
-- **Ideal:** Dedicated GPU  
+### Hardware
+- Minimum: 8GB RAM  
+- Recommended: 16GB RAM  
+- Best: Dedicated GPU  
 
-### Resource-Saving Tips
+### Save Resources
 - Lower bitrate  
-- Reduce resolution  
-- Use fewer wallpapers  
-- Disable while on battery  
+- Lower resolution  
+- Fewer wallpapers  
+- Disable when on battery  
 
 ---
 
 ## 🐛 Troubleshooting
 
 ### Wallpapers Not Starting
-Check if process is running:
 
     pgrep -f hyprland-video-wallpapers.sh
 
-Run script manually:
+Start manually:
 
     ~/.local/bin/hyprland-video-wallpapers.sh
 
-Verify Hyprland:
+Check Hyprland:
 
     hyprctl version
 
 ### Windows Behind Wallpaper
-Ensure togglefloating is disabled:
+Disable togglefloating:
 
     # bind = $mainMod, f, togglefloating
 
-Restart the script afterward.
+Then restart the script.
 
-### High CPU/GPU Usage
-- Optimize videos  
-- Use H.265  
+### High CPU/GPU Use
+- Re-optimize videos  
 - Reduce resolution  
-- Ensure videos are small  
+- Keep file sizes small  
 
 ---
 
 ## 🤝 Contributing
 
-Open an issue or PR on GitHub!
+Pull requests and issues are welcome.
 
 Ways to support:
-- Star the repo  
+- Star the repository  
 - Report bugs  
-- Request features  
+- Submit features  
 - Share wallpapers  
 
 ---
@@ -309,7 +314,7 @@ Ways to support:
 
 ## 📄 License
 
-MIT License – see LICENSE.
+MIT License — see LICENSE.
 
 ---
 
