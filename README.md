@@ -86,7 +86,7 @@ The installer checks (and installs on Arch systems):
 
 ---
 
-## 🏜️ Sample Videos Included
+## 🌆 Sample Videos Included
 
 This project ships with **50+ fully optimized videos**, available in the `sample_videos/` directory. All videos are encoded with **H.265**, typically **500kb–10mb** each, and grouped by theme.
 
