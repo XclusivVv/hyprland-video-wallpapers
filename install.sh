@@ -1,282 +1,551 @@
-!/usr/bin/env bash
+#!/usr/bin/env bash
 set -euo pipefail
+
+# ============================================================================
+#  HYPRLAND VIDEO WALLPAPERS - Modern Interactive Installer
+#  Author: xclusivvvv
+#  GitHub: https://github.com/XclusivVv/hyprland-video-wallpapers
+#  Discord: xclusivvvv
+# ============================================================================
 
 # ANSI Color Codes
 RED='\033[0;31m'
 GREEN='\033[0;32m'
-YELLOW='\033[0;33m'
+YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
-NC='\033[0m' # No Color
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
+BOLD='\033[1m'
+DIM='\033[2m'
+NC='\033[0m'
 
-echo -e "${BLUE}=== Hyprland Video Wallpapers — Installer ===${NC}"
-echo
+# Unicode Symbols
+CHECK='✓'
+CROSS='✗'
+ARROW='→'
+DOT='●'
+STAR='★'
+INFO='ℹ'
+WARN='⚠'
+GEAR='⚙'
+FOLDER='📁'
+FILM='🎬'
 
-# Global Variables
+# Global State
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SAMPLE_VIDEOS_DIR="${SCRIPT_DIR}/sample_videos"
 PROJECT_CONFIG_DIR="${HOME}/.config/hyprland-video-wallpapers"
 CONFIG_FILE="${PROJECT_CONFIG_DIR}/config.conf"
 HELPER_SCRIPT_NAME="hyprland-video-wallpapers.sh"
 HELPER_SCRIPT_PATH="${HOME}/.local/bin/${HELPER_SCRIPT_NAME}"
 HYPR_RULES_FILE="hyprland-video-wallpapers.conf"
 OPTIMIZER_BIN="${HOME}/.local/bin/hyprland-video-optimizer"
+HYPR_CONF="${HOME}/.config/hypr/hyprland.conf"
 
-# Status trackers
+# Setup variables
+NUM_WORKSPACES=0
+TOP_GAP=30
+GAP_SIZE=15
+VIDEO_DIR=""
+declare -a VIDEO_FILES
+declare -a WORKSPACE_VIDEOS
+VIDEO_SOURCE="custom"
 OPTIMIZER_INSTALLED_STATUS="no"
+SOURCE_ADDED_STATUS="no"
+TOGGLEFLOAT_DISABLED_STATUS="no"
 
+# ============================================================================
+#  UTILITY FUNCTIONS
+# ============================================================================
 
-# --- OPTIMIZER INSTALLATION FUNCTION ---
+print_header() {
+    clear
+    printf "%b" "${CYAN}${BOLD}"
+    printf "╔════════════════════════════════════════════════════════════════╗\n"
+    printf "║                                                                ║\n"
+    printf "║          HYPRLAND VIDEO WALLPAPERS - INSTALLER                ║\n"
+    printf "║                                                                ║\n"
+    printf "╚════════════════════════════════════════════════════════════════╝\n"
+    printf "%b" "${NC}"
+}
+
+print_section() {
+    printf "\n%b" "${BLUE}${BOLD}"
+    printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    printf "  %b\n" "$1${NC}"
+    printf "%b" "${BLUE}${BOLD}"
+    printf "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n"
+    printf "%b\n" "${NC}"
+}
+
+print_substep() {
+    printf "%b" "${MAGENTA}${BOLD}"
+    printf "  ▸ %b\n" "$1${NC}"
+}
+
+print_success() {
+    printf "%b" "${GREEN}${CHECK}${NC} ${GREEN}"
+    printf "%b\n" "$1${NC}"
+}
+
+print_error() {
+    printf "%b" "${RED}${CROSS}${NC} ${RED}"
+    printf "%b\n" "$1${NC}"
+}
+
+print_warning() {
+    printf "%b" "${YELLOW}${WARN}${NC} ${YELLOW}"
+    printf "%b\n" "$1${NC}"
+}
+
+print_info() {
+    printf "%b" "${CYAN}${INFO}${NC} ${CYAN}"
+    printf "%b\n" "$1${NC}"
+}
+
+pause_for_user() {
+    printf "\n%b" "${DIM}"
+    printf "Press Enter to continue..."
+    printf "%b\n" "${NC}"
+    read -r
+}
+
+spinner() {
+    local pid=$1
+    local msg=$2
+    local i=0
+    local frames=('⠋' '⠙' '⠹' '⠸' '⠼' '⠴' '⠦' '⠧' '⠇' '⠏')
+    
+    while kill -0 $pid 2>/dev/null; do
+        echo -ne "\r${CYAN}${frames[$((i % ${#frames[@]}))]}${NC} ${msg}..."
+        i=$((i + 1))
+        sleep 0.1
+    done
+    echo -ne "\r   \r"
+}
+
+format_size() {
+    local bytes=$1
+    if (( bytes < 1048576 )); then
+        echo "$((bytes / 1024)) KB"
+    else
+        echo "$((bytes / 1048576)) MB"
+    fi
+}
+
+clean_video_name() {
+    local name="$1"
+    name="${name//_optimized/}"
+    name="${name//_compressed/}"
+    name="${name%.mp4}"
+    name="${name%.mkv}"
+    echo "$name" | sed 's/\b\(.\)/\U\1/g' | sed 's/-/ /g'
+}
+
+# ============================================================================
+#  WELCOME SCREEN
+# ============================================================================
+
+show_welcome() {
+    print_header
+    
+    printf "%b" "${BOLD}"
+    printf "Welcome to Hyprland Video Wallpapers!\n\n"
+    printf "%b" "${NC}${DIM}"
+    printf "A modern solution to bring animated wallpapers to your Hyprland desktop.\n\n"
+    printf "%b" "${NC}"
+    
+    printf "%b" "${YELLOW}"
+    printf "Created by: "
+    printf "%b" "${BOLD}xclusivvvv${NC}\n"
+    printf "%b" "${CYAN}"
+    printf "🔗 GitHub: "
+    printf "%b" "${BOLD}https://github.com/XclusivVv/hyprland-video-wallpapers${NC}\n"
+    printf "%b" "${MAGENTA}"
+    printf "💬 Discord: "
+    printf "%b" "${BOLD}xclusivvvv${NC}\n\n"
+    
+    printf "%b" "${DIM}"
+    printf "═══════════════════════════════════════════════════════════════\n\n"
+    printf "%b" "${NC}"
+    
+    printf "This installer will guide you through:\n"
+    printf "  %b Checking system requirements\n" "${CHECK}"
+    printf "  %b Selecting your video wallpapers\n" "${CHECK}"
+    printf "  %b Configuring workspace settings\n" "${CHECK}"
+    printf "  %b Installing everything for you\n\n" "${CHECK}"
+    
+    print_warning "Before we begin, make sure to close all open windows!"
+    print_info "Your existing windows will be temporarily moved during setup.\n"
+    
+    read -p "Ready to get started? (y/n) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        printf "\n%b\n" "${YELLOW}Installation cancelled.${NC}"
+        exit 0
+    fi
+}
+
+# ============================================================================
+#  SETUP MODE SELECTION
+# ============================================================================
+
+setup_mode_menu() {
+    print_section "Installation Mode"
+    
+    printf "How would you like to set up your wallpapers?\n"
+    printf "\n"
+    printf "  %b1)%b %bExpress Setup%b\n" "${BOLD}" "${NC}" "${GREEN}" "${NC}"
+    printf "     %bQuick installation with recommended defaults%b\n" "${DIM}" "${NC}"
+    printf "\n"
+    printf "  %b2)%b %bCustom Setup%b\n" "${BOLD}" "${NC}" "${CYAN}" "${NC}"
+    printf "     %bFull control over all settings%b\n" "${DIM}" "${NC}"
+    printf "\n"
+    
+    read -p "Select mode (1-2): " setup_mode
+    
+    case $setup_mode in
+        1) return 0 ;;
+        2) return 1 ;;
+        *) 
+            print_error "Invalid selection"
+            pause_for_user
+            setup_mode_menu
+            ;;
+    esac
+}
+
+# ============================================================================
+#  PREREQUISITES CHECK
+# ============================================================================
+
+check_prerequisites() {
+    print_section "Checking Prerequisites"
+    
+    local all_ok=true
+    
+    if command -v hyprctl >/dev/null 2>&1; then
+        print_success "Hyprland detected"
+    else
+        print_error "Hyprland not found"
+        print_info "Please ensure Hyprland is installed"
+        read -p "Continue anyway? (y/n) " -n 1 -r
+        echo
+        if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+            exit 1
+        fi
+    fi
+    
+    for cmd in mpv socat jq; do
+        if command -v $cmd >/dev/null 2>&1; then
+            print_success "$cmd installed"
+        else
+            print_warning "$cmd not found"
+            all_ok=false
+        fi
+    done
+    
+    if [ "$all_ok" = false ]; then
+        echo ""
+        if command -v pacman >/dev/null 2>&1; then
+            read -p "Install missing dependencies with pacman? (y/n) " -n 1 -r
+            echo
+            if [[ $REPLY =~ ^[Yy]$ ]]; then
+                sudo pacman -S --needed --noconfirm mpv socat jq &
+                local pid=$!
+                spinner $pid "Installing dependencies"
+                wait $pid
+                print_success "Dependencies installed"
+            fi
+        else
+            print_warning "Please install mpv, socat, and jq manually"
+        fi
+    fi
+    
+    pause_for_user
+}
+
+# ============================================================================
+#  VIDEO SOURCE SELECTION
+# ============================================================================
+
+select_video_source() {
+    print_section "Video Source Selection"
+    
+    local has_samples=false
+    [ -d "$SAMPLE_VIDEOS_DIR" ] && [ "$(ls -A "$SAMPLE_VIDEOS_DIR" 2>/dev/null | wc -l)" -gt 0 ] && has_samples=true
+    
+    if [ "$has_samples" = true ]; then
+        printf "Choose your video source:\n"
+        printf "\n"
+        printf "  %b1)%b %bUse Sample Videos%b\n" "${BOLD}" "${NC}" "${GREEN}" "${NC}"
+        printf "     %b30+ pre-optimized, high-quality wallpapers%b\n" "${DIM}" "${NC}"
+        printf "     %bPerfect for quick setup and testing%b\n" "${DIM}" "${NC}"
+        printf "\n"
+        printf "  %b2)%b %bUse My Own Videos%b\n" "${BOLD}" "${NC}" "${CYAN}" "${NC}"
+        printf "     %bBring your own video files%b\n" "${DIM}" "${NC}"
+        printf "\n"
+        
+        read -p "Select option (1-2): " video_choice
+        
+        case $video_choice in
+            1)
+                VIDEO_SOURCE="sample"
+                VIDEO_DIR="$SAMPLE_VIDEOS_DIR"
+                load_sample_videos
+                ;;
+            2)
+                VIDEO_SOURCE="custom"
+                prompt_custom_video_dir
+                ;;
+            *)
+                print_error "Invalid selection"
+                pause_for_user
+                select_video_source
+                ;;
+        esac
+    else
+        print_info "No sample videos found. Using custom video directory."
+        VIDEO_SOURCE="custom"
+        prompt_custom_video_dir
+    fi
+}
+
+load_sample_videos() {
+    print_section "Loading Sample Videos"
+    
+    mapfile -t VIDEO_FILES < <(find "$SAMPLE_VIDEOS_DIR" -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.mkv" \) | sort)
+    
+    if [ ${#VIDEO_FILES[@]} -eq 0 ]; then
+        print_error "No video files found in sample directory"
+        exit 1
+    fi
+    
+    print_success "Found ${#VIDEO_FILES[@]} sample videos"
+    printf "\n"
+    
+    local i=1
+    for video in "${VIDEO_FILES[@]}"; do
+        local name=$(clean_video_name "$(basename "$video")")
+        local size=$(stat -f%z "$video" 2>/dev/null || stat -c%s "$video" 2>/dev/null)
+        local size_fmt=$(format_size $size)
+        printf "  %b %-35s [%-8s]\n" "${FILM}" "$name" "$size_fmt"
+    done
+    printf "\n"
+    
+    pause_for_user
+}
+
+prompt_custom_video_dir() {
+    print_section "Custom Video Directory"
+    
+    while true; do
+        printf "Enter the path to your video directory:\n"
+        read -p "${ARROW} " VIDEO_DIR
+        
+        VIDEO_DIR="${VIDEO_DIR/#\~/$HOME}"
+        
+        if [ ! -d "$VIDEO_DIR" ]; then
+            print_error "Directory not found: $VIDEO_DIR"
+            continue
+        fi
+        
+        mapfile -t VIDEO_FILES < <(find "$VIDEO_DIR" -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.mkv" \) | sort)
+        
+        if [ ${#VIDEO_FILES[@]} -eq 0 ]; then
+            print_error "No .mp4 or .mkv files found"
+            continue
+        fi
+        
+        print_success "Found ${#VIDEO_FILES[@]} video files"
+        break
+    done
+    
+    pause_for_user
+}
+
+# ============================================================================
+#  WORKSPACE CONFIGURATION
+# ============================================================================
+
+configure_workspaces() {
+    print_section "Workspace Configuration"
+    
+    printf "How many workspaces would you like to configure?\n"
+    printf "%b(Recommended: 5 for most users)%b\n" "${DIM}" "${NC}"
+    printf "\n"
+    
+    while true; do
+        read -p "${ARROW} Enter number (1-10): " NUM_WORKSPACES
+        
+        if [[ "$NUM_WORKSPACES" =~ ^[0-9]+$ ]] && [ "$NUM_WORKSPACES" -ge 1 ] && [ "$NUM_WORKSPACES" -le 10 ]; then
+            print_success "Configured for $NUM_WORKSPACES workspaces"
+            break
+        else
+            print_error "Please enter a number between 1 and 10"
+        fi
+    done
+    
+    pause_for_user
+}
+
+configure_gaps() {
+    print_section "Gap Configuration"
+    
+    printf "Configure spacing for your windows:\n"
+    printf "%b(Gaps create space around windows and between elements)%b\n" "${DIM}" "${NC}"
+    printf "\n"
+    
+    while true; do
+        printf "%bTop gap (for waybar/status bar):%b\n" "${DIM}" "${NC}"
+        read -p "${ARROW} Pixels (recommended: 30): " TOP_GAP
+        
+        if [[ "$TOP_GAP" =~ ^[0-9]+$ ]]; then
+            print_success "Top gap set to ${TOP_GAP}px"
+            break
+        else
+            print_error "Please enter a valid number"
+        fi
+    done
+    
+    printf "\n"
+    
+    while true; do
+        printf "%bGap around windows:%b\n" "${DIM}" "${NC}"
+        read -p "${ARROW} Pixels (recommended: 15): " GAP_SIZE
+        
+        if [[ "$GAP_SIZE" =~ ^[0-9]+$ ]]; then
+            print_success "Window gap set to ${GAP_SIZE}px"
+            break
+        else
+            print_error "Please enter a valid number"
+        fi
+    done
+    
+    pause_for_user
+}
+
+# ============================================================================
+#  VIDEO SELECTION FOR WORKSPACES
+# ============================================================================
+
+select_videos_for_workspaces() {
+    print_section "Select Videos for Workspaces"
+    
+    printf "Choose a video for each workspace:\n"
+    printf "\n"
+    
+    for i in "${!VIDEO_FILES[@]}"; do
+        local name=$(clean_video_name "$(basename "${VIDEO_FILES[$i]}")")
+        printf "  %b%2d)%b %s\n" "${BOLD}" "$((i+1))" "${NC}" "$name"
+    done
+    
+    printf "\n"
+    
+    for ((ws=1; ws<=NUM_WORKSPACES; ws++)); do
+        while true; do
+            read -p "Workspace $ws: " video_num
+            
+            if [[ "$video_num" =~ ^[0-9]+$ ]] && [ "$video_num" -ge 1 ] && [ "$video_num" -le ${#VIDEO_FILES[@]} ]; then
+                WORKSPACE_VIDEOS[$ws]="${VIDEO_FILES[$((video_num-1))]}"
+                local name=$(clean_video_name "$(basename "${WORKSPACE_VIDEOS[$ws]}")")
+                print_success "Workspace $ws: $name"
+                break
+            else
+                print_error "Please enter a number between 1 and ${#VIDEO_FILES[@]}"
+            fi
+        done
+    done
+    
+    pause_for_user
+}
+
+# ============================================================================
+#  REVIEW SCREEN
+# ============================================================================
+
+show_review() {
+    print_section "Review Configuration"
+    
+    printf "%bYour Setup:%b\n\n" "${BOLD}" "${NC}"
+    
+    printf "  %b Workspaces: %b%s%b\n" "${GEAR}" "${BOLD}" "$NUM_WORKSPACES" "${NC}"
+    printf "  %b Top Gap: %b${TOP_GAP}px%b\n" "${GEAR}" "${BOLD}" "${NC}"
+    printf "  %b Window Gap: %b${GAP_SIZE}px%b\n" "${GEAR}" "${BOLD}" "${NC}"
+    printf "  %b Video Source: %b$([ "$VIDEO_SOURCE" = "sample" ] && echo "Sample Videos" || echo "Custom Directory")%b\n" "${GEAR}" "${BOLD}" "${NC}"
+    printf "\n"
+    
+    printf "%bWorkspace Assignments:%b\n\n" "${BOLD}" "${NC}"
+    for ((ws=1; ws<=NUM_WORKSPACES; ws++)); do
+        local name=$(clean_video_name "$(basename "${WORKSPACE_VIDEOS[$ws]}")")
+        printf "  Workspace %d: %b%s%b\n" "$ws" "${BOLD}" "$name" "${NC}"
+    done
+    
+    printf "\n"
+    print_warning "Important: Close all windows before continuing!"
+    printf "\n"
+    
+    read -p "Proceed with installation? (y/n) " -n 1 -r
+    echo
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        printf "\n%b\n" "${YELLOW}Installation cancelled.${NC}"
+        exit 0
+    fi
+}
+
+# ============================================================================
+#  INSTALLATION
+# ============================================================================
+
 install_optimizer() {
     local OPTIMIZER_REPO="https://github.com/XclusivVv/hyprland-video-optimizer.git"
     local TEMP_DIR
     
-    echo -e "\n${BLUE}[*] Attempting to install hyprland-video-optimizer...${NC}"
+    print_substep "Cloning hyprland-video-optimizer repository..."
     
     if ! command -v git >/dev/null 2>&1; then
-        echo -e "${RED}[!] Error: 'git' command not found. Please install git to automatically install the optimizer.${NC}"
+        print_error "git not found. Cannot install optimizer."
         return 1
     fi
 
     TEMP_DIR=$(mktemp -d)
-    echo -e "${BLUE}[*] Cloning repository to temporary directory: ${TEMP_DIR}...${NC}"
     
-    if git clone "$OPTIMIZER_REPO" "$TEMP_DIR"; then
-        echo -e "${GREEN}[+] Clone successful. Installing optimizer script...${NC}"
-        
-        # Assume the main script is 'hyprland-video-optimizer.sh' inside the repo root
+    if git clone "$OPTIMIZER_REPO" "$TEMP_DIR" &>/dev/null; then
         if [ -f "${TEMP_DIR}/hyprland-video-optimizer.sh" ]; then
             mkdir -p "$(dirname "$OPTIMIZER_BIN")"
             cp "${TEMP_DIR}/hyprland-video-optimizer.sh" "${OPTIMIZER_BIN}"
             chmod +x "${OPTIMIZER_BIN}"
-            echo -e "${GREEN}[+] hyprland-video-optimizer installed to ${OPTIMIZER_BIN}${NC}"
+            print_success "hyprland-video-optimizer installed"
             rm -rf "$TEMP_DIR"
-            return 0 # Success
+            return 0
         else
-            echo -e "${RED}[!] Error: Could not find 'hyprland-video-optimizer.sh' in the cloned repository.${NC}"
+            print_error "Could not find optimizer script in repository"
         fi
     else
-        echo -e "${RED}[!] Error: Git clone failed. Check network connectivity or repository URL.${NC}"
+        print_error "Failed to clone repository"
     fi
     
     [ -d "$TEMP_DIR" ] && rm -rf "$TEMP_DIR"
-    return 1 # Failure
+    return 1
 }
-# ----------------------------------------
 
-# Check Hyprland
-if ! command -v hyprctl >/dev/null 2>&1; then
-  echo -e "${RED}[!] hyprctl not found. Ensure a Hyprland variant is installed.${NC}"
-  read -p "Continue anyway? (y/N) " yn
-  case "$yn" in [Yy]*) ;; *) echo -e "${RED}Abort.${NC}"; exit 1 ;; esac
-fi
-
-# Install runtime dependencies if pacman exists
-if command -v pacman >/dev/null 2>&1; then
-  echo -e "${BLUE}[+] Installing mpv, socat, jq...${NC}"
-  sudo pacman -S --needed --noconfirm mpv socat jq
-else
-  echo -e "${YELLOW}[!] pacman not detected. Install mpv, socat, jq manually.${NC}"
-fi
-
-echo
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "  VIDEO WALLPAPER CHECK"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo
-
-# --- VIDEO CHECK LOGIC ---
-read -p "Do you have video wallpapers you would like to use for Hyprland? (Y/n) " has_videos
-
-if [[ "${has_videos,,}" == "n" ]]; then
-    echo
-    echo -e "${YELLOW}--------------------------------------------------------------------------------${NC}"
-    echo -e "${YELLOW}  You'll need a video to continue.${NC}"
-    echo -e "  Consider checking out the ${GREEN}hyprland-video-optimizer${NC} project:"
-    echo -e "  ${BLUE}https://github.com/XclusivVv/hyprland-video-optimizer${NC}"
-    echo -e "  This repository contains ${GREEN}sample video wallpapers${NC} and a powerful tool"
-    echo -e "  to re-encode and compress larger videos."
-    echo -e "  (Example: The author compressed an 80MB video down to 5MB with no visible quality loss.)"
-    echo -e "  ${RED}Note: Regular, unoptimized videos will hog system resources ALOT!${NC}"
-    echo -e "${YELLOW}--------------------------------------------------------------------------------${NC}"
-    echo -e "${RED}Installation aborted. Please return when you have your videos ready.${NC}"
-    exit 1
-fi
-
-echo
-echo -e "${YELLOW}--------------------------------------------------------------------------------${NC}"
-echo -e "${YELLOW}  Author's Recommendation:${NC}"
-echo -e "  Video wallpapers should be compressed to around ${GREEN}10MB or less${NC} to reduce system overhead."
-echo -e "  ${RED}Running unoptimized videos as wallpapers can lead to high CPU/GPU usage.${NC}"
-echo -e "${YELLOW}--------------------------------------------------------------------------------${NC}"
-echo
-
-read -p "Have your videos been compressed to a wallpaper-friendly size (e.g., 10MB or less)? (Y/n) " is_compressed
-
-if [[ "${is_compressed,,}" == "n" ]]; then
-    echo
-    echo -e "${YELLOW}--------------------------------------------------------------------------------${NC}"
-    echo -e "  It is strongly suggested you compress them before proceeding."
-    echo -e "  You can use the ${GREEN}hyprland-video-optimizer${NC} tool for this."
-    read -p "Would you like to automatically install hyprland-video-optimizer now? (Y/n) " install_optimizer_now
+install_helper_script() {
+    print_substep "Installing helper script..."
+    mkdir -p ~/.local/bin
     
-    if [[ "${install_optimizer_now,,}" != "n" ]]; then
-        if install_optimizer; then
-            OPTIMIZER_INSTALLED_STATUS="yes"
-        fi
-    else
-        echo -e "${YELLOW}[-] Skipping automatic optimizer installation. You can install it manually later.${NC}"
-    fi
-    echo -e "${YELLOW}--------------------------------------------------------------------------------${NC}"
-fi
-# --- END VIDEO CHECK LOGIC ---
-
-echo
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "  CONFIGURATION"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo
-
-# Ask for number of workspaces
-while true; do
-  read -p "How many workspaces would you like to configure? (1-10): " NUM_WORKSPACES
-  if [[ "$NUM_WORKSPACES" =~ ^[0-9]+$ ]] && [ "$NUM_WORKSPACES" -ge 1 ] && [ "$NUM_WORKSPACES" -le 10 ]; then
-    break
-  else
-    echo -e "${RED}[!] Please enter a number between 1 and 10.${NC}"
-  fi
-done
-
-# Ask for gap sizes
-echo
-echo -e "Gap configuration (these create space around windows):"
-while true; do
-  read -p "Top gap size in pixels (for waybar/status bar, recommended: 30): " TOP_GAP
-  if [[ "$TOP_GAP" =~ ^[0-9]+$ ]]; then
-    break
-  else
-    echo -e "${RED}[!] Please enter a valid number.${NC}"
-  fi
-done
-
-while true; do
-  read -p "Gap size around windows in pixels (recommended: 15): " GAP_SIZE
-  if [[ "$GAP_SIZE" =~ ^[0-9]+$ ]]; then
-    break
-  else
-    echo -e "${RED}[!] Please enter a valid number.${NC}"
-  fi
-done
-
-# Ask for video directory
-echo
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "  VIDEO SELECTION"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo
-while true; do
-  read -p "Enter the directory path containing your video wallpapers: " VIDEO_DIR
-  VIDEO_DIR="${VIDEO_DIR/#\~/$HOME}"  # Expand ~
-  
-  if [ -d "$VIDEO_DIR" ]; then
-    # Find video files
-    mapfile -t VIDEO_FILES < <(find "$VIDEO_DIR" -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.mkv" \) | sort)
-    
-    if [ ${#VIDEO_FILES[@]} -eq 0 ]; then
-      echo -e "${RED}[!] No .mp4 or .mkv files found in that directory.${NC}"
-      read -p "Try a different directory? (y/N) " retry
-      case "$retry" in [Yy]*) continue ;; *) echo -e "${RED}Abort.${NC}"; exit 1 ;; esac
-    else
-      echo -e "${GREEN}[+] Found ${#VIDEO_FILES[@]} video file(s).${NC}"
-      break
-    fi
-  else
-    echo -e "${RED}[!] Directory not found: $VIDEO_DIR${NC}"
-    read -p "Try again? (y/N) " retry
-    case "$retry" in [Yy]*) continue ;; *) echo -e "${RED}Abort.${NC}"; exit 1 ;; esac
-  fi
-done
-
-# Display available videos
-echo
-echo -e "Available videos:"
-for i in "${!VIDEO_FILES[@]}"; do
-  echo "  [$((i+1))] $(basename "${VIDEO_FILES[$i]}")"
-done
-
-# Select videos for each workspace
-declare -a WORKSPACE_VIDEOS
-echo
-echo -e "Select a video for each workspace (enter the number):"
-for ((ws=1; ws<=NUM_WORKSPACES; ws++)); do
-  while true; do
-    read -p "Workspace $ws: " video_num
-    if [[ "$video_num" =~ ^[0-9]+$ ]] && [ "$video_num" -ge 1 ] && [ "$video_num" -le ${#VIDEO_FILES[@]} ]; then
-      WORKSPACE_VIDEOS[$ws]="${VIDEO_FILES[$((video_num-1))]}"
-      echo -e "  → ${GREEN}$(basename "${WORKSPACE_VIDEOS[$ws]}") ${NC}"
-      break
-    else
-      echo -e "${RED}[!] Please enter a number between 1 and ${#VIDEO_FILES[@]}.${NC}"
-    fi
-  done
-done
-
-# Setup installation
-echo
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "  INSTALLATION"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo
-
-# 0. Pre-Installation Check: Stop existing video processes
-echo -e "${BLUE}[*] Checking for existing video wallpaper processes (mpv/mpvpaper)...${NC}"
-
-# Check specifically for mpvpaper, as it is the most common conflict
-if pgrep -f "mpvpaper" > /dev/null; then
-    echo -e "${YELLOW}[!] WARNING: Detected running 'mpvpaper' instances!${NC}"
-    echo "    'mpvpaper' will conflict with this script and MUST be killed."
-    read -p "Allow the installer to kill mpvpaper and other conflicting processes? (Y/n) " allow_stop
-
-    if [[ "${allow_stop,,}" != "n" ]]; then
-        echo -e "${GREEN}[+] Killing conflicting processes...${NC}"
-        # Use pkill with '|| true' to prevent script exit if no process is found
-        pkill -f "mpvpaper" || true
-        pkill -f "mpv" || true
-        
-        echo -e "${GREEN}[+] Conflicting video processes have been successfully closed.${NC}"
-    else
-        echo -e "${RED}[!] Conflicting processes were not closed. Installation aborted.${NC}"
-        exit 1
-    fi
-# Check for our old script running
-elif pgrep -f "mpv --title=mpv-workspace-video" > /dev/null; then
-    # If the conflict is just our old script, kill it quietly
-    echo -e "${YELLOW}[!] Detected previous instances of this script running. Killing them...${NC}"
-    pkill -f "mpv --title=mpv-workspace-video" || true
-    echo -e "${GREEN}[+] Conflicting video processes have been successfully closed.${NC}"
-else
-    echo -e "${GREEN}[+] No conflicting video processes found.${NC}"
-fi
-
-# 1. Install Static Helper Script
-echo -e "${BLUE}[+] Installing helper script to ${HELPER_SCRIPT_PATH}${NC}"
-mkdir -p ~/.local/bin
-
-# Write the static core logic script (it sources the config file)
-cat > "$HELPER_SCRIPT_PATH" <<'SCRIPT_CORE_LOGIC_EOF'
+    cat > "$HELPER_SCRIPT_PATH" <<'SCRIPT_EOF'
 #!/bin/bash
 set -euo pipefail
 
-# Source the configuration file containing user-defined variables
 CONFIG_FILE="${HOME}/.config/hyprland-video-wallpapers/config.conf"
 if [ ! -f "$CONFIG_FILE" ]; then
-    echo "Error: Configuration file not found at $CONFIG_FILE. Run install.sh again." >&2
+    echo "Error: Configuration file not found at $CONFIG_FILE" >&2
     exit 1
 fi
 source "$CONFIG_FILE"
 
-# --- 1. CONFIGURATION (Static) ---
 MPV_WINDOW_CLASS="mpv-workspace-video"
 MPV_BASE_SOCKET="/tmp/mpv-ws"
-
-# --- 2. CORE FUNCTIONS ---
 
 get_socket_path() {
     echo "${MPV_BASE_SOCKET}-$1-ipc"
@@ -296,11 +565,9 @@ send_mpv_command() {
     fi 
 }
 
-# START_ALL_MPV (FIXED: Better timing and no initial pause)
 start_all_mpv() {
     echo "Starting MPV instances for all defined workspaces..."
     
-    # Get monitor resolution for MPV sizing
     local monitor_info=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | "\(.width) \(.height)"')
     read -r SCREEN_WIDTH SCREEN_HEIGHT <<< "$monitor_info"
 
@@ -312,7 +579,6 @@ start_all_mpv() {
         
         rm -f "$socket_path"
 
-        # Start MPV in the background
         mpv \
             --no-osc --no-stop-screensaver \
             --input-ipc-server="$socket_path" \
@@ -321,60 +587,46 @@ start_all_mpv() {
             --geometry="${SCREEN_WIDTH}x${SCREEN_HEIGHT}+0+0" \
             "$video_path" &
         
-        sleep 2.0 # CRITICAL DELAY: Give MPV time to start socket
+        sleep 2.0
         
-        # 1. Move to workspace
         hyprctl dispatch movetoworkspace "$ws_id,title:$window_title" > /dev/null 2>&1
-        sleep 0.5 # Add small delay after move
+        sleep 0.5
         
-        # 2. Force to master layout for full screen
         hyprctl dispatch focuswindow "title:$window_title" > /dev/null 2>&1
         hyprctl dispatch layoutmsg "focusmaster master" > /dev/null 2>&1
-        hyprctl dispatch splitratio exact 1.0 > /dev/null 2>&1 # Ensure it takes up 100% of the master area
+        hyprctl dispatch splitratio exact 1.0 > /dev/null 2>&1
         
-        echo "  -> Started video for Workspace $ws_id (master window)"
-
-        # Pause initially
+        echo "  → Started video for Workspace $ws_id"
         send_mpv_command "$ws_id" '{"command":["set_property","pause",true]}'
     done
 }
 
-# Function to pseudo-tile windows on a workspace
 pseudo_tile_workspace() {
     local ws_id="$1"
     
-    # Get all floating windows on this workspace (excluding MPV)
     local windows=$(hyprctl clients -j | jq -r ".[] | select(.workspace.id == $ws_id and .floating == true and (.title | test(\"^mpv-workspace-video\") | not)) | .address")
     
-    # Convert to array
     local win_array=()
     while IFS= read -r addr; do
         [[ -n "$addr" ]] && win_array+=("$addr")
     done <<< "$windows"
     
     local win_count=${#win_array[@]}
-    
-    # Skip if no windows to tile
     [[ $win_count -eq 0 ]] && return
     
-    # Get monitor resolution
     local monitor_info=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | "\(.width) \(.height)"')
     read -r SCREEN_WIDTH SCREEN_HEIGHT <<< "$monitor_info"
     
-    # Apply outer gaps (top windows get extra TOP_GAP)
     local usable_width=$((SCREEN_WIDTH - GAP_SIZE * 2))
     local usable_height=$((SCREEN_HEIGHT - TOP_GAP - GAP_SIZE * 2))
-    local start_y=$((GAP_SIZE + TOP_GAP))  # Top row starts below waybar
+    local start_y=$((GAP_SIZE + TOP_GAP))
     
-    # Simple tiling algorithm based on window count
     case $win_count in
         1)
-            # Single window - fullscreen with gaps (top row)
             hyprctl dispatch resizewindowpixel "exact $usable_width $usable_height,address:${win_array[0]}" > /dev/null 2>&1
             hyprctl dispatch movewindowpixel "exact $GAP_SIZE $start_y,address:${win_array[0]}" > /dev/null 2>&1
             ;;
         2)
-            # Two windows - split vertically with gaps (both in top row)
             local half_width=$(( (usable_width - GAP_SIZE) / 2 ))
             hyprctl dispatch resizewindowpixel "exact $half_width $usable_height,address:${win_array[0]}" > /dev/null 2>&1
             hyprctl dispatch movewindowpixel "exact $GAP_SIZE $start_y,address:${win_array[0]}" > /dev/null 2>&1
@@ -384,39 +636,32 @@ pseudo_tile_workspace() {
             hyprctl dispatch movewindowpixel "exact $half_width_gap $start_y,address:${win_array[1]}" > /dev/null 2>&1
             ;;
         3)
-            # Three windows - one left (full height), two right stacked
             local half_width=$(( (usable_width - GAP_SIZE) / 2 ))
             local half_height=$(( (usable_height - GAP_SIZE) / 2 ))
             local half_width_gap=$((GAP_SIZE + half_width + GAP_SIZE))
             local half_height_gap=$((start_y + half_height + GAP_SIZE))
             
-            # Left window (full height, in top row)
             hyprctl dispatch resizewindowpixel "exact $half_width $usable_height,address:${win_array[0]}" > /dev/null 2>&1
             hyprctl dispatch movewindowpixel "exact $GAP_SIZE $start_y,address:${win_array[0]}" > /dev/null 2>&1
             
-            # Top right window (in top row)
             hyprctl dispatch resizewindowpixel "exact $half_width $half_height,address:${win_array[1]}" > /dev/null 2>&1
             hyprctl dispatch movewindowpixel "exact $half_width_gap $start_y,address:${win_array[1]}" > /dev/null 2>&1
             
-            # Bottom right window (NOT in top row, so only regular GAP_SIZE from window above)
             hyprctl dispatch resizewindowpixel "exact $half_width $half_height,address:${win_array[2]}" > /dev/null 2>&1
             hyprctl dispatch movewindowpixel "exact $half_width_gap $half_height_gap,address:${win_array[2]}" > /dev/null 2>&1
             ;;
         4)
-            # Four windows - 2x2 grid
             local half_width=$(( (usable_width - GAP_SIZE) / 2 ))
             local half_height=$(( (usable_height - GAP_SIZE) / 2 ))
             local half_width_gap=$((GAP_SIZE + half_width + GAP_SIZE))
             local half_height_gap=$((start_y + half_height + GAP_SIZE))
             
-            # Top row windows
             hyprctl dispatch resizewindowpixel "exact $half_width $half_height,address:${win_array[0]}" > /dev/null 2>&1
             hyprctl dispatch movewindowpixel "exact $GAP_SIZE $start_y,address:${win_array[0]}" > /dev/null 2>&1
             
             hyprctl dispatch resizewindowpixel "exact $half_width $half_height,address:${win_array[1]}" > /dev/null 2>&1
             hyprctl dispatch movewindowpixel "exact $half_width_gap $start_y,address:${win_array[1]}" > /dev/null 2>&1
             
-            # Bottom row windows (NOT in top row)
             hyprctl dispatch resizewindowpixel "exact $half_width $half_height,address:${win_array[2]}" > /dev/null 2>&1
             hyprctl dispatch movewindowpixel "exact $GAP_SIZE $half_height_gap,address:${win_array[2]}" > /dev/null 2>&1
             
@@ -424,7 +669,6 @@ pseudo_tile_workspace() {
             hyprctl dispatch movewindowpixel "exact $half_width_gap $half_height_gap,address:${win_array[3]}" > /dev/null 2>&1
             ;;
         *)
-            # More than 4 windows - use grid layout (simplified)
             local cols=3
             local rows=$(( (win_count + cols - 1) / cols ))
             local win_width=$(( (usable_width - GAP_SIZE * (cols - 1)) / cols ))
@@ -435,7 +679,6 @@ pseudo_tile_workspace() {
                 local row=$((i / cols))
                 local x=$((GAP_SIZE + col * (win_width + GAP_SIZE)))
                 
-                # Top row gets start_y (which includes TOP_GAP), other rows only get GAP_SIZE spacing
                 if [ $row -eq 0 ]; then
                     local y=$start_y
                 else
@@ -449,15 +692,9 @@ pseudo_tile_workspace() {
     esac
 }
 
-# --- 3. SOCKET DISCOVERY (Static) ---
-
 HYPRLAND_INSTANCE_SIGNATURE="$HYPRLAND_INSTANCE_SIGNATURE"
 if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
-    HYPRLAND_INSTANCE_SIGNATURE=$(hyprctl instance -j 2>&1 | grep -v 'ok' | grep -v 'Invalid dispatcher' | jq -r '.instanceSignature')
-fi
-if [ -z "$HYPRLAND_INSTANCE_SIGNATURE" ]; then
-    echo "FATAL: Could not retrieve HYPRLAND_INSTANCE_SIGNATURE."
-    exit 1
+    HYPRLAND_INSTANCE_SIGNATURE=$(hyprctl instance -j 2>&1 | jq -r '.instanceSignature' 2>/dev/null || echo "")
 fi
 
 SEARCH_PATHS=("/tmp/hypr/" "$XDG_RUNTIME_DIR/hypr/")
@@ -478,8 +715,6 @@ else
     HYPRLAND_EVENT_SOCKET="/tmp/hypr/$HYPRLAND_INSTANCE_SIGNATURE/.socket2"
 fi
 
-# --- 4. MAIN EXECUTION ---
-
 cleanup() {
     echo -e "\nExiting script and closing all active video wallpapers..."
     pkill -f "mpv --title=${MPV_WINDOW_CLASS}" || true 
@@ -487,20 +722,16 @@ cleanup() {
 }
 trap cleanup EXIT
 
-# Kill old instances before starting new ones
 pkill -f "mpv --title=${MPV_WINDOW_CLASS}" || true 
 
-# Save all currently open windows to temporary workspace before starting (FIXED retrieval logic)
 if [ "$TEMP_WORKSPACE_ID" -le 10 ]; then
     echo "Moving existing windows to temporary Workspace $TEMP_WORKSPACE_ID..."
     declare -A SAVED_WINDOWS
     COUNT_MOVED=0
     
-    # Select all windows that are not the video wallpaper and are on a configured workspace
     while IFS='|' read -r address workspace_id; do
         if [[ -n "$address" ]] && [[ "$workspace_id" =~ ^[0-9]+$ ]] && [ "$workspace_id" -ge 1 ] && [ "$workspace_id" -le "$NUM_WORKSPACES" ]; then
             SAVED_WINDOWS["$address"]="$workspace_id"
-            # Move to temporary workspace
             hyprctl dispatch movetoworkspacesilent "$TEMP_WORKSPACE_ID,address:$address" > /dev/null 2>&1
             COUNT_MOVED=$((COUNT_MOVED + 1))
         fi
@@ -511,27 +742,22 @@ else
     echo "Skipping window movement: TEMP_WORKSPACE_ID ($TEMP_WORKSPACE_ID) is outside range 1-10."
 fi
 
-
 start_all_mpv
 
-# Wait for MPV windows to fully initialize and settle as master windows
 echo "Waiting for video wallpapers to initialize..."
 sleep 3
 
-# Restore windows from temporary workspace back to their original workspaces
 if [ "$TEMP_WORKSPACE_ID" -le 10 ]; then
     echo "Restoring windows from temporary workspace..."
     for address in "${!SAVED_WINDOWS[@]}"; do
         original_ws="${SAVED_WINDOWS[$address]}"
         hyprctl dispatch movetoworkspacesilent "$original_ws,address:$address" > /dev/null 2>&1
-        echo "  -> Restored window $address to workspace $original_ws"
+        echo "  → Restored window $address to workspace $original_ws"
     done
 fi
 
-# Small delay to let windows settle
 sleep 1.0
 
-# Retile each workspace that has windows
 echo "Applying window tiling..."
 for ws_id in $(echo "${SAVED_WINDOWS[@]}" | tr ' ' '\n' | sort -u); do
     if [[ "$ws_id" =~ ^[0-9]+$ ]]; then
@@ -540,7 +766,6 @@ for ws_id in $(echo "${SAVED_WINDOWS[@]}" | tr ' ' '\n' | sort -u); do
     fi
 done
 
-# Get initial workspace and play
 CURRENT_WORKSPACE=$(hyprctl monitors -j 2>/dev/null | jq -r '.[] | select(.focused) | .activeWorkspace.id' 2>/dev/null)
 if [[ $CURRENT_WORKSPACE ]]; then
     send_mpv_command "$CURRENT_WORKSPACE" '{"command":["set_property","pause",false]}'
@@ -549,60 +774,46 @@ fi
 
 echo "Starting listener for Hyprland workspace events on $HYPRLAND_EVENT_SOCKET..."
 
-# Track windows per workspace for pseudo-tiling
 declare -A WORKSPACE_WINDOWS
 
 socat -u UNIX-CONNECT:"$HYPRLAND_EVENT_SOCKET" - | while IFS= read -r event; do
     
     if [[ $event == workspace* ]]; then
-        
         CURRENT_WORKSPACE=${event#workspace>>}
         
         if [[ "$CURRENT_WORKSPACE" =~ ^[0-9]+$ ]]; then
-            
             for entry in "${VIDEO_MAP[@]}"; do
                 IFS=':' read -r ws_id video_path <<< "$entry"
                 
                 if [ "$ws_id" == "$CURRENT_WORKSPACE" ]; then
-                    # Play video on current workspace
                     send_mpv_command "$ws_id" '{"command":["set_property","pause",false]}'
                 else
-                    # Pause videos on other workspaces
                     send_mpv_command "$ws_id" '{"command":["set_property","pause",true]}'
                 fi
             done
         fi
     fi
     
-    # When a new window opens, immediately position it and then retile
     if [[ $event == openwindow* ]]; then
-        # Extract window address from event: openwindow>>address,workspace,class,title
         NEW_WINDOW_ADDR=$(echo "$event" | cut -d'>' -f3 | cut -d',' -f1)
         
         CURRENT_WS=$(hyprctl monitors -j 2>/dev/null | jq -r '.[] | select(.focused) | .activeWorkspace.id' 2>/dev/null)
         
         if [[ "$CURRENT_WS" =~ ^[0-9]+$ ]]; then
-            # Immediately resize and position the new window to prevent fullscreen flash
-            # Get monitor resolution
             local monitor_info=$(hyprctl monitors -j | jq -r '.[] | select(.focused) | "\(.width) \(.height)"')
             read -r SCREEN_WIDTH SCREEN_HEIGHT <<< "$monitor_info"
             
             local default_width=$((SCREEN_WIDTH - GAP_SIZE * 2))
             local default_height=$((SCREEN_HEIGHT - TOP_GAP - GAP_SIZE))
             
-            # Immediately resize and move the new window
             hyprctl dispatch resizewindowpixel "exact $default_width $default_height,address:$NEW_WINDOW_ADDR" > /dev/null 2>&1
             hyprctl dispatch movewindowpixel "exact $GAP_SIZE $TOP_GAP,address:$NEW_WINDOW_ADDR" > /dev/null 2>&1
             
-            # Wait a moment for the resize to take effect
             sleep 0.2
-            
-            # Now retile all windows on this workspace properly
             pseudo_tile_workspace "$CURRENT_WS"
         fi
     fi
     
-    # When a window closes, retile the workspace
     if [[ $event == closewindow* ]]; then
         CURRENT_WS=$(hyprctl monitors -j 2>/dev/null | jq -r '.[] | select(.focused) | .activeWorkspace.id' 2>/dev/null)
         
@@ -613,82 +824,40 @@ socat -u UNIX-CONNECT:"$HYPRLAND_EVENT_SOCKET" - | while IFS= read -r event; do
     fi
 
 done
-SCRIPT_CORE_LOGIC_EOF
+SCRIPT_EOF
 
-chmod +x "$HELPER_SCRIPT_PATH"
+    chmod +x "$HELPER_SCRIPT_PATH"
+    print_success "Helper script installed"
+}
 
-# 2. Create Configuration Directory and Files
-echo -e "${BLUE}[+] Creating configuration directory: ${PROJECT_CONFIG_DIR}${NC}"
-mkdir -p "$PROJECT_CONFIG_DIR"
-
-echo -e "${BLUE}[+] Copying Hyprland rules to ${PROJECT_CONFIG_DIR}/${HYPR_RULES_FILE}${NC}"
-cp "$HYPR_RULES_FILE" "$PROJECT_CONFIG_DIR/"
-
-# Calculate the temporary workspace ID
-TEMP_WORKSPACE_ID=$((NUM_WORKSPACES + 1))
-if [ "$TEMP_WORKSPACE_ID" -gt 10 ]; then
-    TEMP_WORKSPACE_ID=99 # Set to invalid/high value to skip move logic in helper script
-    echo -e "${YELLOW}[!] WARNING: Configured ${NUM_WORKSPACES} workspaces. Cannot guarantee a free temporary workspace. Window saving will be skipped.${NC}"
-fi
-
-# 3. Handle hyprland.conf Sourcing
-echo
-echo -e "${BLUE}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "  HYPRLAND CONFIGURATION"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo
-HYPR_CONF="${HOME}/.config/hypr/hyprland.conf"
-SOURCE_LINE="source = ${PROJECT_CONFIG_DIR}/${HYPR_RULES_FILE}"
-SOURCE_ADDED_STATUS="no"
-
-if [ -f "$HYPR_CONF" ]; then
-  echo -e "${GREEN}[+] Found hyprland.conf at ${HYPR_CONF}${NC}"
-
-  # FIX: Check if the source line already exists before prompting
-  if grep -q "source.*${HYPR_RULES_FILE}" "$HYPR_CONF"; then
-      echo -e "${YELLOW}[!] The source line for video wallpapers already exists in hyprland.conf. Skipping addition.${NC}"
-      SOURCE_ADDED_STATUS="yes" # Mark as present, so the uninstaller knows it exists
-  else
-      # If it does not exist, ask to add it
-      echo "We will add the following line to load the video wallpaper settings:"
-      echo -e "${YELLOW}  $SOURCE_LINE${NC}"
-      
-      read -p "Add this line to hyprland.conf? (Y/n) " add_source
-      
-      if [[ "${add_source,,}" != "n" ]]; then
-          echo "" >> "$HYPR_CONF"
-          echo "# Video wallpapers configuration" >> "$HYPR_CONF"
-          echo "$SOURCE_LINE" >> "$HYPR_CONF"
-          echo -e "${GREEN}[+] Added source line to hyprland.conf.${NC}"
-          SOURCE_ADDED_STATUS="yes"
-      else
-          echo -e "${YELLOW}[-] Skipping adding source line. You must add it manually to use the wallpapers.${NC}"
-      fi
-  fi
-else
-  echo -e "${RED}[!] Could not find hyprland.conf at ${HYPR_CONF}${NC}"
-  echo "    You'll need to manually add this line to your config:"
-  echo -e "    ${YELLOW}$SOURCE_LINE${NC}"
-fi
-
-# 4. Handle togglefloating keybind
-echo
-echo -e "${YELLOW}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "  IMPORTANT: TOGGLE FLOATING WARNING"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo
-echo "The 'togglefloating' keybind can cause issues with video wallpapers."
-echo "It is STRONGLY RECOMMENDED to disable this keybind."
-echo
-read -p "Disable the togglefloating keybind? (Y/n) " disable_toggle
-TOGGLEFLOAT_DISABLED_STATUS="no"
-
-if [[ "${disable_toggle,,}" != "n" ]]; then
+configure_hyprland() {
+    print_substep "Configuring Hyprland..."
     
-    HYPR_CONFIG_DIR="${HOME}/.config/hypr"
-    KEYBINDS_FILE=""
+    if [ -f "$HYPR_CONF" ]; then
+        print_success "Found hyprland.conf"
+        
+        if grep -q "source.*${HYPR_RULES_FILE}" "$HYPR_CONF"; then
+            print_info "Source line already exists in hyprland.conf"
+            SOURCE_ADDED_STATUS="yes"
+        else
+            echo "" >> "$HYPR_CONF"
+            echo "# Video wallpapers configuration" >> "$HYPR_CONF"
+            echo "source = ${PROJECT_CONFIG_DIR}/${HYPR_RULES_FILE}" >> "$HYPR_CONF"
+            print_success "Added source line to hyprland.conf"
+            SOURCE_ADDED_STATUS="yes"
+        fi
+    else
+        print_error "hyprland.conf not found"
+        print_info "You'll need to manually add: source = ${PROJECT_CONFIG_DIR}/${HYPR_RULES_FILE}"
+    fi
+}
+
+disable_togglefloating() {
+    print_substep "Disabling togglefloating keybind..."
     
-    # Check for keybinds.conf first
+    local HYPR_CONFIG_DIR="${HOME}/.config/hypr"
+    local KEYBINDS_FILE=""
+    
     if [[ -f "${HYPR_CONFIG_DIR}/keybindings.conf" ]]; then
         KEYBINDS_FILE="${HYPR_CONFIG_DIR}/keybindings.conf"
     elif [[ -f "${HYPR_CONFIG_DIR}/hyprland.conf" ]]; then
@@ -696,22 +865,28 @@ if [[ "${disable_toggle,,}" != "n" ]]; then
     fi
 
     if [[ -n "$KEYBINDS_FILE" ]]; then
-        echo -e "${BLUE}[+] Commenting out 'togglefloating' in ${KEYBINDS_FILE}...${NC}"
-        # Use sed to comment out any line containing 'togglefloating'
         sed -i 's/^\([^#]*togglefloating.*\)$/#\1/' "$KEYBINDS_FILE"
-        echo -e "${GREEN}[+] togglefloating keybind has been disabled.${NC}"
+        print_success "togglefloating keybind disabled"
         TOGGLEFLOAT_DISABLED_STATUS="yes"
     else
-        echo -e "${RED}[!] Could not locate a keybinds file. You may need to disable 'togglefloating' manually.${NC}"
+        print_warning "Could not locate keybinds file"
     fi
-fi
+}
 
-# 5. Write config.conf with tracking status
-cat > "$CONFIG_FILE" <<CONFIG_EOF
+write_config_file() {
+    print_substep "Writing configuration file..."
+    
+    mkdir -p "$PROJECT_CONFIG_DIR"
+    
+    local TEMP_WORKSPACE_ID=$((NUM_WORKSPACES + 1))
+    if [ "$TEMP_WORKSPACE_ID" -gt 10 ]; then
+        TEMP_WORKSPACE_ID=99
+    fi
+    
+    cat > "$CONFIG_FILE" <<CONFIG_EOF
 # Configuration generated by Hyprland Video Wallpapers Installer on $(date)
 
 NUM_WORKSPACES=$NUM_WORKSPACES
-# The workspace ID used to temporarily move existing windows (1-10, or 99 to skip)
 TEMP_WORKSPACE_ID=$TEMP_WORKSPACE_ID
 
 # Status tracking for uninstallation
@@ -727,72 +902,187 @@ TOP_GAP=$TOP_GAP
 VIDEO_MAP=(
 CONFIG_EOF
 
-# Add user's video mappings
-for ((ws=1; ws<=NUM_WORKSPACES; ws++)); do
-  # Write the path to the config file
-  echo "    \"$ws:${WORKSPACE_VIDEOS[$ws]}\"" >> "$CONFIG_FILE"
-done
-
-# Close the array definition
-echo ")" >> "$CONFIG_FILE"
-
-# 6. Final Prompt and Execution
-echo
-echo -e "${GREEN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
-echo -e "  INSTALLATION COMPLETE!"
-echo -e "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo "Important notes:"
-echo
-echo -e "1. The configuration is now stored in: ${YELLOW}${CONFIG_FILE}${NC}"
-echo
-echo -e "2. The executable script is: ${YELLOW}${HELPER_SCRIPT_PATH}${NC}"
-echo
-echo "3. To start the wallpapers, add this line to your hyprland.conf:"
-echo -e "   ${YELLOW}exec-once = ${HELPER_SCRIPT_PATH}${NC}"
-echo
-echo -e "4. To uninstall, run the new script: ${YELLOW}./uninstall.sh${NC}"
-echo
-
-# --- NEW WARNING BLOCK ---
-
-# Create the block capital, red border warning
-echo
-echo -e "${RED}╔════════════════════════════════════════════════════════════════════════════╗${NC}"
-echo -e "${RED}║${NC} ${RED}  ${RED}     ${NC}${RED}W A R N I N G:   C L O S E   A L L   W I N D O W S !${NC}                     ${RED}${NC} ${RED}║${NC}"
-echo -e "${RED}║${NC} ${RED}  ${RED}     ${NC}${RED}You must close all open windows before starting the script.${NC}         ${RED}${NC} ${RED}║${NC}"
-echo -e "${RED}║${NC} ${RED}  ${RED}     ${NC}${RED}Otherwise, your existing windows may be hidden behind the wallpaper.${NC} ${RED}${NC} ${RED}║${NC}"
-echo -e "${RED}╚════════════════════════════════════════════════════════════════════════════╝${NC}"
-echo
-
-# --- END NEW WARNING BLOCK ---
-
-
-if [ "$OPTIMIZER_INSTALLED_STATUS" == "yes" ]; then
-    echo
-    echo -e "${BLUE}What would you like to run now?${NC}"
-    PS3="Select an option (1-3): "
-    options=("Run Video Wallpapers" "Run Video Optimizer" "Exit")
-    select action in "${options[@]}"; do
-        case $REPLY in
-            1) 
-                echo -e "${GREEN}[+] Running video wallpapers: ${HELPER_SCRIPT_PATH}...${NC}";
-                # The script will now rely on the user having read the warning above.
-                "$HELPER_SCRIPT_PATH" & 
-                break;;
-            2) echo -e "${GREEN}[+] Running video optimizer: hyprland-video-optimizer...${NC}"; "$OPTIMIZER_BIN"; break;;
-            3) echo -e "${YELLOW}[-] Exiting.${NC}"; exit 0;;
-            *) echo -e "${RED}[!] Invalid selection, please try again.${NC}";;
-        esac
+    for ((ws=1; ws<=NUM_WORKSPACES; ws++)); do
+        echo "    \"$ws:${WORKSPACE_VIDEOS[$ws]}\"" >> "$CONFIG_FILE"
     done
-else
-    # Only offer to run the wallpaper script if the optimizer wasn't installed
-    read -p "Would you like to run the video wallpapers script now? (Y/n) " run_now
+    
+    echo ")" >> "$CONFIG_FILE"
+    
+    print_success "Configuration file saved"
+}
 
-    if [[ "${run_now,,}" != "n" ]]; then
-        echo -e "${GREEN}[+] Running ${HELPER_SCRIPT_PATH}...${NC}"
-        # The script will now rely on the user having read the warning above.
-        "$HELPER_SCRIPT_PATH" &
+stop_conflicting_processes() {
+    print_substep "Stopping conflicting video processes..."
+    
+    if pgrep -f "mpvpaper" > /dev/null; then
+        print_warning "Detected mpvpaper instances"
+        pkill -f "mpvpaper" || true
+        pkill -f "mpv" || true
+        print_success "Processes stopped"
+    elif pgrep -f "mpv --title=mpv-workspace-video" > /dev/null; then
+        print_warning "Detected previous wallpaper instances"
+        pkill -f "mpv --title=mpv-workspace-video" || true
+        print_success "Processes stopped"
     else
-        echo -e "${YELLOW}[-] Skipping execution. Remember to run it manually or add to autostart.${NC}"
+        print_success "No conflicting processes found"
     fi
-fi
+}
+
+install_system() {
+    print_section "Installing System"
+    
+    stop_conflicting_processes
+    
+    print_substep "Creating configuration directory..."
+    mkdir -p "$PROJECT_CONFIG_DIR"
+    print_success "Configuration directory created"
+    
+    install_helper_script
+    
+    print_substep "Copying Hyprland rules..."
+    cp "$HYPR_RULES_FILE" "$PROJECT_CONFIG_DIR/"
+    print_success "Hyprland rules copied"
+    
+    configure_hyprland
+    disable_togglefloating
+    write_config_file
+}
+
+# ============================================================================
+#  COMPLETION SCREEN
+# ============================================================================
+
+show_completion() {
+    print_section "Installation Complete!"
+    
+    printf "%b%b🎉 Welcome to your new video wallpapers!%b\n\n" "${GREEN}" "${BOLD}" "${NC}"
+    
+    printf "%bConfiguration saved to:%b\n" "${BOLD}" "${NC}"
+    printf "  %b~/.config/hyprland-video-wallpapers/%b\n\n" "${DIM}" "${NC}"
+}
+
+setup_autostart() {
+    print_section "Autostart Configuration"
+    
+    printf "Would you like to automatically start video wallpapers on login?\n"
+    printf "%b(This adds the script to your hyprland.conf)%b\n\n" "${DIM}" "${NC}"
+    
+    read -p "Enable autostart? (y/n) " -n 1 -r
+    echo
+    
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        printf "\n"
+        print_substep "Adding exec-once to hyprland.conf..."
+        
+        if [ -f "$HYPR_CONF" ]; then
+            echo "" >> "$HYPR_CONF"
+            echo "# Auto-start video wallpapers" >> "$HYPR_CONF"
+            echo "exec-once = $HELPER_SCRIPT_PATH" >> "$HYPR_CONF"
+            print_success "Autostart configured"
+            printf "\n%b(Wallpapers will start automatically when you reload/restart Hyprland)%b\n\n" "${DIM}" "${NC}"
+        else
+            print_error "Could not find hyprland.conf"
+            printf "Please manually add this line to your config:\n"
+            printf "  %bexec-once = %s%b\n\n" "${CYAN}" "$HELPER_SCRIPT_PATH" "${NC}"
+        fi
+    else
+        printf "\n"
+        print_info "Skipped autostart setup"
+        printf "\nYou can enable it later by adding this to your hyprland.conf:\n"
+        printf "  %bexec-once = %s%b\n\n" "${CYAN}" "$HELPER_SCRIPT_PATH" "${NC}"
+    fi
+}
+
+start_wallpapers_now() {
+    print_section "Start Video Wallpapers"
+    
+    printf "Would you like to start the video wallpapers now?\n"
+    printf "%b(Close all windows first!)%b\n\n" "${YELLOW}" "${NC}"
+    
+    read -p "Start now? (y/n) " -n 1 -r
+    echo
+    
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+        printf "\n"
+        print_warning "Make sure all windows are closed!"
+        printf "\n"
+        read -p "Ready? Press Enter to start..." -r
+        
+        printf "\n"
+        print_substep "Starting video wallpapers..."
+        printf "\n"
+        
+        # Run the helper script in the background
+        "$HELPER_SCRIPT_PATH" &
+        local pid=$!
+        
+        sleep 2
+        
+        if kill -0 $pid 2>/dev/null; then
+            print_success "Wallpapers started successfully!"
+            printf "\n%b(Script running in background)%b\n\n" "${DIM}" "${NC}"
+        else
+            print_error "Failed to start wallpapers"
+            printf "\nYou can try manually running:\n"
+            printf "  %b%s%b\n\n" "${CYAN}" "$HELPER_SCRIPT_PATH" "${NC}"
+        fi
+    else
+        printf "\n"
+        print_info "Skipped starting wallpapers"
+        printf "\nYou can start them manually by running:\n"
+        printf "  %b%s%b\n\n" "${CYAN}" "$HELPER_SCRIPT_PATH" "${NC}"
+    fi
+}
+
+show_final_info() {
+    print_section "Installation Summary"
+    
+    printf "%bWhat was installed:%b\n\n" "${BOLD}" "${NC}"
+    printf "  %b Helper script%b\n" "${CHECK}" "${NC}"
+    printf "     %s%b\n\n" "$HELPER_SCRIPT_PATH" "${NC}"
+    printf "  %b Configuration directory%b\n" "${CHECK}" "${NC}"
+    printf "     %s%b\n\n" "$PROJECT_CONFIG_DIR" "${NC}"
+    printf "  %b Hyprland rules%b\n" "${CHECK}" "${NC}"
+    printf "     %s/hyprland-video-wallpapers.conf%b\n\n" "$PROJECT_CONFIG_DIR" "${NC}"
+    
+    printf "%bNeed help or have feedback?%b\n\n" "${BOLD}" "${NC}"
+    printf "  %b🔗 GitHub: https://github.com/XclusivVv/hyprland-video-wallpapers%b\n" "${CYAN}" "${NC}"
+    printf "  %b💬 Discord: xclusivvvv%b\n" "${MAGENTA}" "${NC}"
+    printf "  %b📖 Docs: Check the README for advanced configuration%b\n\n" "${CYAN}" "${NC}"
+    
+    if [ "$OPTIMIZER_INSTALLED_STATUS" == "yes" ]; then
+        printf "%bPro tip:%b\n" "${BOLD}" "${NC}"
+        printf "  Use %bhyprland-video-optimizer%b to compress videos further\n" "${CYAN}" "${NC}"
+        printf "  and improve performance!\n\n"
+    fi
+}
+
+# ============================================================================
+#  MAIN FLOW
+# ============================================================================
+
+main() {
+    show_welcome
+    
+    if setup_mode_menu; then
+        NUM_WORKSPACES=5
+        TOP_GAP=30
+        GAP_SIZE=15
+        select_video_source
+    else
+        check_prerequisites
+        select_video_source
+        configure_workspaces
+        configure_gaps
+    fi
+    
+    select_videos_for_workspaces
+    show_review
+    install_system
+    show_completion
+    setup_autostart
+    start_wallpapers_now
+    show_final_info
+}
+
+main
