@@ -32,25 +32,25 @@ Transform your Hyprland desktop with **per-workspace video wallpapers**. Each wo
 - Automatic play/pause when switching  
 - Supports MP4 and MKV  
 
-### 🧙 Interactive Installation Wizard
+### 🪄 Interactive Installation Wizard
 - Modern, colorful TUI-based setup  
 - Auto-detects Hyprland and dependencies  
 - Sample video browser  
 - Express + Custom modes  
 - Optional autostart  
 
-### ⚙️ Smart Window Management
+### 🖥️ Smart Window Management
 - One MPV instance per workspace  
 - Wallpaper windows set to lowest z-layer  
 - Apps arranged in pseudo-tiling layout  
 - Adjustable gaps  
 
-### 🎬 Pre-Optimized Wallpapers
+### 📑 Pre-Optimized Wallpapers
 - 50+ anime, abstract, nature, and tech clips  
 - H.265 encoding for small size  
 - Files typically 500kb-10mb  
 
-### 🚀 Easy Management
+### 🤯 Easy Management
 - Enable autostart  
 - Start/stop anytime  
 - Re-run installer safely  
@@ -58,7 +58,7 @@ Transform your Hyprland desktop with **per-workspace video wallpapers**. Each wo
 
 ---
 
-## 🚀 Quick Start
+## 🔥 Quick Start
 
     git clone https://github.com/XclusivVv/hyprland-video-wallpapers.git
     cd hyprland-video-wallpapers
@@ -84,7 +84,7 @@ The installer checks (and installs on Arch systems):
 
 ---
 
-## 🎬 Sample Videos Included
+## 🏜️ Sample Videos Included
 
 This project ships with **50+ fully optimized videos**, available in the `sample_videos/` directory. All videos are encoded with **H.265**, typically **500kb–10mb** each, and grouped by theme.
 
@@ -116,7 +116,7 @@ These serve as ready-to-use wallpapers or templates to optimize your own videos.
 
 ---
 
-## 🎮 Usage
+## ℹ️ Usage
 
 ### Autostart
 If enabled, reload Hyprland:
@@ -222,7 +222,7 @@ Recommended settings:
 
 ---
 
-## 🐛 Troubleshooting
+## 💬 Troubleshooting
 
 ### Wallpapers Not Starting
 
@@ -277,7 +277,7 @@ MIT License — see LICENSE.
 
 ---
 
-## 🎬 Credits
+## 📝 Credits
 
 - MPV — video backend  
 - Hyprland — window manager  
