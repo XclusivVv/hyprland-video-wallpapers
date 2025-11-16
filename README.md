@@ -22,6 +22,8 @@
 
 ---
 
+# Some wallpaper samples can be found here: [View wallpapers](https://github.com/XclusivVv/hyprland-video-optimizer)
+
 ## Features
 
 Includes a full **interactive installation wizard**:
