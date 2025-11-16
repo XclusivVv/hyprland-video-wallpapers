@@ -10,7 +10,9 @@
   ![lastcommit](https://img.shields.io/github/last-commit/XclusivVv/hyprland-video-wallpapers)
 </div>
 
-![Centered Image](/docs/preview/preview.gif){: .center}
+<div align="center">
+  <img src="docs/preview/preview.gif" alt="preview animation">
+</div>
 
 ---
 
