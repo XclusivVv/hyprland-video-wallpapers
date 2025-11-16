@@ -282,7 +282,7 @@ MIT License — see LICENSE.
 - MPV — video backend  
 - Hyprland — window manager  
 - socat — IPC utilities  
-- hyprland-video-optimizer — compression tool  
+- ![hyprland-video-optimizer](https://github.com/XclusivVv/hyprland-video-optimizer) 
 
 Wallpapers sourced from various creators and optimized for performance.
 
