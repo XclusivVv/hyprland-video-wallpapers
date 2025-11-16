@@ -15,7 +15,7 @@
 ## Preview
 
 <p align="center">
-  <img src="assets/preview.gif" alt="Preview">
+  <img src="docs/preview/preview.gif" alt="Preview">
 </p>
 
 *Note: Not recommended for low-spec systems. 16GB RAM minimum is strongly advised.*
