@@ -165,7 +165,7 @@ Installed script:
 
     ./uninstall.sh
 
-This removes:
+This removes and reverts any changes the install.sh made to your system:
 - Running wallpaper processes  
 - Autostart entries  
 - Sourced config lines  
