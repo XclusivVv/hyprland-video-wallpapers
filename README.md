@@ -86,53 +86,12 @@ The installer checks (and installs on Arch systems):
 
 ---
 
-## 🎯 Installation Process
-
-The installation wizard is fully interactive and visually-guided. Here is the flow:
-
-### 1. Select Setup Mode
-- **Express Mode**  
-  Automatically applies:
-  - 5 workspaces  
-  - 30px top gap  
-  - 15px window gap  
-
-- **Custom Mode**  
-  Lets you configure every option manually.
-
-### 2. Pick Your Video Source
-You may choose between:
-- **Included sample wallpapers** (preview list provided)  
-- **Your own video files** (multiple formats supported)  
-
-### 3. Assign Wallpapers Per Workspace
-- Each workspace will show a list of videos  
-- File sizes and names are displayed  
-- Only selected workspaces get wallpapers
-
-### 4. Confirm Your Settings
-A summary page displays:
-- Selected videos  
-- Workspace count  
-- Gap values  
-- Autostart preference  
-
-### 5. Autostart Configuration (Optional)
-Enabling autostart adds:
-- A Hyprland `exec-once` entry  
-- A sourced config snippet
-
-### 6. Launch Immediately (Optional)
-Wallpaper animation starts as soon as installation completes.
-
----
-
 ## 🎬 Sample Videos Included
 
 This project ships with **50+ fully optimized videos**, available in the `sample_videos/` directory. All videos are encoded with **H.265**, typically **500kb–10mb** each, and grouped by theme.
 
 ### Anime & Action
-Examples include:
+
 - black-panther_optimized.mp4  
 - goku-lofi_optimized.mp4  
 - kakashi_optimized.mp4  
@@ -141,7 +100,7 @@ Examples include:
 - venom-marvel_optimized.mp4  
 
 ### Abstract & Visual
-Examples include:
+
 - burning_optimized.mp4  
 - kaleidoscope_optimized.mp4  
 - hypnotic_optimized.mp4  
@@ -149,7 +108,7 @@ Examples include:
 - vaporwave_optimized.mp4  
 
 ### Nature & Atmospheric
-Examples include:
+
 - galaxy_optimized.mp4  
 - butterflies_optimized.mp4  
 - torii-waterfall_optimized.mp4  
@@ -250,7 +209,7 @@ Recommended settings:
 - Codec: H.265  
 - Bitrate: 500–1500 kbps  
 - Resolution matching your display  
-- 5–10MB ideal per wallpaper  
+- <10MB ideal per wallpaper  
 
 ### Hardware
 - Minimum: 8GB RAM  
