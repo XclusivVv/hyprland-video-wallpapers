@@ -1,4 +1,6 @@
-# HyprVideo
+<p align="center">
+  <img src="/assets/logo.png" alt="Logo">
+</p>
 
 **Per-workspace video wallpapers with pseudo-tiling window management**
 
@@ -12,7 +14,9 @@
 
 ## Preview
 
-![preview](docs/preview/preview.gif)
+<p align="center">
+  <img src="assets/preview.gif" alt="Preview">
+</p>
 
 *Note: Not recommended for low-spec systems. 16GB RAM minimum is strongly advised.*
 
