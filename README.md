@@ -70,6 +70,8 @@ Transform your Hyprland desktop with **per-workspace video wallpapers**. Each wo
 
 The installer guides you through everything interactively.
 
+![Centered Image](/assets/tutorial.gif)
+
 ---
 
 ## 📋 Requirements
