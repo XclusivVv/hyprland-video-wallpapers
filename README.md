@@ -204,6 +204,7 @@ Responds to:
 Use the optimizer:
 
     hyprland-video-optimizer
+https://github.com/XclusivVv/hyprland-video-optimizer
 
 Recommended settings:
 - Codec: H.265  
