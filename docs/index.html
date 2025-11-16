@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Hyprland Video Wallpapers Demo</title>
+<title>HyprVideo — Video Wallpapers for Hyprland</title>
+
 <style>
     body {
         background-color: #1e1e2e;
@@ -21,9 +22,9 @@
         margin-bottom: 1rem;
     }
     img.logo {
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
     }
-    video {
+    video, img.preview {
         border: 2px solid #89b4fa;
         border-radius: 8px;
         max-width: 90%;
@@ -32,12 +33,14 @@
     }
     p {
         margin-bottom: 1rem;
-        line-height: 1.5;
+        line-height: 1.6;
+        max-width: 900px;
     }
     ul {
         text-align: left;
-        max-width: 90%;
+        max-width: 900px;
         margin-bottom: 1rem;
+        line-height: 1.6;
     }
     ul li {
         margin-bottom: 0.5rem;
@@ -45,101 +48,164 @@
     pre {
         background-color: #313244;
         color: #cdd6f4;
-        padding: 0.75rem;
-        border-radius: 6px;
+        padding: 1rem;
+        border-radius: 8px;
         overflow-x: auto;
+        text-align: left;
+        max-width: 900px;
         white-space: pre-wrap;
         word-wrap: break-word;
-        text-align: left;
-        max-width: 90%;
-        margin-bottom: 1rem;
     }
     code {
         font-family: "Fira Code", monospace;
-        font-size: 0.95rem;
     }
     .badge img {
         margin: 0 4px;
+        margin-bottom: 1rem;
     }
-    i {
+    footer {
+        margin-top: 2rem;
         color: #89b4fa;
+        opacity: 0.8;
     }
 </style>
 </head>
+
 <body>
 
-<h1>Hyprland Video Wallpapers</h1>
-<img class="logo" src="preview/logo.png" width="540" alt="HyprVideo logo">
+<h1>HyprVideo</h1>
+<img class="logo" src="assets/logo.png" width="540" alt="HyprVideo logo">
+
 <p><strong>Per-workspace video wallpapers with pseudo-tiling window management</strong></p>
 
-<p class="badge">
-<img src="https://img.shields.io/badge/Shell_Script-Bash-4EAA25?logo=gnu-bash&logoColor=white" alt="bash" />
-<img src="https://img.shields.io/badge/Hyprland-Compatible-00A0FF?logo=wayland&logoColor=white" alt="hyprland" />
-<img src="https://img.shields.io/badge/MPV-Video_Backgrounds-6A0DAD?logo=mpv&logoColor=white" alt="mpv" />
-<img src="https://img.shields.io/github/license/XclusivVv/hyprland-video-wallpapers" alt="license" />
-<img src="https://img.shields.io/github/last-commit/XclusivVv/hyprland-video-wallpapers" alt="last commit" />
-</p>
+<div class="badge">
+    <img src="https://img.shields.io/badge/Shell_Script-Bash-4EAA25?logo=gnu-bash&logoColor=white" alt="bash" />
+    <img src="https://img.shields.io/badge/Hyprland-Compatible-00A0FF?logo=wayland&logoColor=white" alt="hyprland" />
+    <img src="https://img.shields.io/badge/MPV-Video_Backgrounds-6A0DAD?logo=mpv&logoColor=white" alt="mpv" />
+    <img src="https://img.shields.io/github/license/XclusivVv/hyprland-video-wallpapers" alt="license" />
+    <img src="https://img.shields.io/github/last-commit/XclusivVv/hyprland-video-wallpapers" alt="last commit" />
+</div>
 
 <h2>Preview</h2>
-<video controls autoplay loop muted>
-    <source src="preview/preview.mp4" type="video/mp4">
-    Your browser does not support the video tag.
+<video class="preview" controls>
+  <source src="docs/preview/preview.mp4" type="video/mp4">
+  Your browser does not support the video tag.
 </video>
 
 <p><i>Note: Not recommended for low-spec systems. 16GB RAM minimum is strongly advised.</i></p>
 
-<h2>Quick Start (Arch Linux)</h2>
+<hr>
+
+<h2>Quick Start</h2>
+
 <pre><code>git clone https://github.com/XclusivVv/hyprland-video-wallpapers.git
 cd hyprland-video-wallpapers
 
-chmod +x install.sh
+chmod +x install.sh uninstall.sh
 ./install.sh
 </code></pre>
 
-<h2>What the installer does</h2>
+<hr>
+
+<h2>Features</h2>
+
 <ul>
-    <li>Verifies <code>hyprctl</code> exists (warns if not).</li>
-    <li>Installs runtime dependencies (<code>mpv</code>, <code>socat</code>, <code>jq</code>) via pacman if available.</li>
-    <li>Copies <code>hyprland-video-wallpapers.sh</code> to <code>~/.local/bin/hyprland-video-wallpapers</code>.</li>
-    <li>Copies config <code>hyprland-video-wallpapers.conf</code> to <code>~/.config/hypr/</code>.</li>
-    <li>Creates autostart fragment <code>~/.config/hypr/workspace-video-autostart.conf</code>.</li>
-    <li>Optionally comments out <code>togglefloating</code> in <code>keybinds.conf</code> to prevent conflicts.</li>
+    <li><strong>Interactive setup wizard</strong> that guides you through installation.</li>
+    <li><strong>Dependency checker</strong> for mpv, jq, socat (installs automatically on Arch).</li>
+    <li><strong>Optional video optimizer</strong> for compressing heavy wallpapers.</li>
+    <li><strong>Interactive video mapping</strong> for assigning videos to workspaces 1–10.</li>
+    <li><strong>Hyprland auto-configuration</strong> with safe prompts for modifying configs.</li>
+    <li><strong>Togglefloating conflict detection</strong> with automatic fix.</li>
+    <li><strong>Complete uninstall script</strong> that reverts all changes.</li>
 </ul>
 
-<p>Works with any Hyprland variant (<code>hyprland</code>, <code>hyprland-git</code>, etc.).</p>
+<hr>
 
-<h2>Hyprland configuration</h2>
-<pre><code>source = ~/.config/hypr/hyprland-video-wallpapers.conf
-</code></pre>
+<h2>What the Installer Does</h2>
 
-<h2>Script configuration</h2>
-<pre><code>VIDEO_MAP=(
-  "1:/home/you/videos/video1.mp4"
-  "2:/home/you/videos/video2.mp4"
-  # ...
-)
-
-GAP_SIZE=5
-TOP_GAP=15
-</code></pre>
-
-<h2>Usage</h2>
-<pre><code>~/.local/bin/hyprland-video-wallpapers &
-
-pkill -f hyprland-video-wallpapers.sh
-</code></pre>
-
-<h2>How it works</h2>
 <ul>
-    <li>MPV is promoted to master tile and pushed to the bottom of the tiled layer (<code>alterzorder bottom</code>).</li>
-    <li>All other apps float and are pseudo-tiled via exact geometry dispatchers.</li>
-    <li>Ensures stable video backgrounds per workspace while other apps float on top.</li>
+    <li>Checks for <code>hyprctl</code>.</li>
+    <li>Installs <code>mpv</code>, <code>socat</code>, <code>jq</code> on Arch systems.</li>
+    <li>Configures layout gaps (top gap + gap size).</li>
+    <li>Lets you pick a video directory and map videos to workspaces.</li>
+    <li>Installs the main script:</li>
+    <ul>
+        <li><code>~/.local/bin/hyprland-video-wallpapers.sh</code></li>
+    </ul>
+    <li>Creates user configuration:</li>
+    <ul>
+        <li><code>~/.config/hyprland-video-wallpapers/config.conf</code></li>
+        <li><code>~/.config/hyprland-video-wallpapers/hyprland-video-wallpapers.conf</code></li>
+    </ul>
+    <li>Offers to patch <code>~/.config/hypr/hyprland.conf</code>:</li>
+    <ul>
+        <li>Add <code>source</code> line</li>
+        <li>Disable conflicting <code>togglefloating</code> keybind</li>
+    </ul>
 </ul>
+
+<hr>
+
+<h2>Hyprland Autostart</h2>
+
+<p>Add this to your Hyprland config:</p>
+
+<pre><code>exec-once = ~/.local/bin/hyprland-video-wallpapers.sh
+</code></pre>
+
+<hr>
+
+<h2>Configuration File</h2>
+
+<p>Your complete settings are saved at:</p>
+
+<pre><code>~/.config/hyprland-video-wallpapers/config.conf
+</code></pre>
+
+<p>You can edit it manually — or simply rerun <code>./install.sh</code>.</p>
+
+<hr>
+
+<h2>Uninstallation</h2>
+
+<pre><code>./uninstall.sh
+</code></pre>
+
+<p>The uninstaller will:</p>
+
+<ul>
+    <li>Stop all mpv wallpaper processes</li>
+    <li>Remove <code>exec-once</code> from Hyprland</li>
+    <li>Remove sourced config lines</li>
+    <li>Restore togglefloating if it was disabled</li>
+    <li>Delete all installed files + optimizer tool</li>
+</ul>
+
+<hr>
+
+<h2>How It Works</h2>
+
+<ul>
+    <li>Each workspace runs its own dedicated MPV instance.</li>
+    <li>The MPV window becomes the <strong>master</strong> window on its workspace.</li>
+    <li>Videos:
+        <ul>
+            <li>Play when you enter their workspace</li>
+            <li>Pause when you leave</li>
+        </ul>
+    </li>
+    <li>All non-MPV windows are <strong>floating</strong> by rule.</li>
+    <li>The script listens for window events and arranges floating apps in a <strong>pseudo-tiling layout</strong>.</li>
+</ul>
+
+<hr>
 
 <h2>License</h2>
 <p>MIT — see <code>LICENSE</code>.</p>
 
-<p><i>_PS: This was a struggle._</i></p>
+<footer>
+    <i>PS: This page is fully rewritten, modern, and GitHub Pages–ready.</i>
+</footer>
 
 </body>
 </html>
