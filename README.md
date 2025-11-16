@@ -1,5 +1,3 @@
-# Hyprland Video Wallpapers
-
 ![Centered Image](/assets/logo.png)
 
 <div align="center">
