@@ -63,7 +63,7 @@ print_header() {
     printf "%b" "${CYAN}${BOLD}"
     printf "╔════════════════════════════════════════════════════════════════╗\n"
     printf "║                                                                ║\n"
-    printf "║          HYPRLAND VIDEO WALLPAPERS - INSTALLER                ║\n"
+    printf "║          HYPRLAND VIDEO WALLPAPERS - INSTALLER                 ║\n"
     printf "║                                                                ║\n"
     printf "╚════════════════════════════════════════════════════════════════╝\n"
     printf "%b" "${NC}"
