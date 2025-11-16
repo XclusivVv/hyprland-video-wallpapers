@@ -1,6 +1,6 @@
 # Hyprland Video Wallpapers
 
-![Centered Image](/assets/logo.png){: .center}
+![Centered Image](/assets/logo.png)
 
 <div align="center">
   <h1>Per-workspace animated wallpapers with intelligent window management</h1>
