@@ -22,7 +22,7 @@
 
 Transform your Hyprland desktop with **per-workspace video wallpapers**. Each workspace gets its own animated background that automatically pauses when switching away. Windows are arranged intelligently in a pseudo-tiling layout above the wallpaper.
 
-**Note:** 16GB RAM is recommended. Videos should be optimized (H.265, ~5–10MB).
+**Note:** 16GB RAM is recommended. Videos should be optimized (H.265, ~500kb–10mb).
 
 ---
 
@@ -50,7 +50,7 @@ Transform your Hyprland desktop with **per-workspace video wallpapers**. Each wo
 ### 🎬 Pre-Optimized Wallpapers
 - 50+ anime, abstract, nature, and tech clips  
 - H.265 encoding for small size  
-- Files typically 2–25MB  
+- Files typically 500kb-10mb  
 
 ### 🚀 Easy Management
 - Enable autostart  
@@ -129,7 +129,7 @@ Wallpaper animation starts as soon as installation completes.
 
 ## 🎬 Sample Videos Included
 
-This project ships with **50+ fully optimized videos**, available in the `sample_videos/` directory. All videos are encoded with **H.265**, typically **2–26MB** each, and grouped by theme.
+This project ships with **50+ fully optimized videos**, available in the `sample_videos/` directory. All videos are encoded with **H.265**, typically **500kb–10mb** each, and grouped by theme.
 
 ### Anime & Action
 Examples include:
