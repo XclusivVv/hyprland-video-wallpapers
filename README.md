@@ -20,6 +20,8 @@
 
 Transform your Hyprland desktop with **per-workspace video wallpapers**. Each workspace gets its own animated background that automatically pauses when switching away. Windows are arranged intelligently in a pseudo-tiling layout above the wallpaper.
 
+Use [hyprland-video-optimizer](https://github.com/XclusivVv/hyprland-video-optimizer) to compress your own videos for wallpapers!
+
 **Note:** 16GB RAM is recommended. Videos should be optimized (H.265, ~500kb–10mb).
 
 ---
