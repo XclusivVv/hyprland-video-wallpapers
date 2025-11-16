@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+!/usr/bin/env bash
 set -euo pipefail
 
 # ANSI Color Codes
@@ -753,6 +753,20 @@ echo
 echo -e "4. To uninstall, run the new script: ${YELLOW}./uninstall.sh${NC}"
 echo
 
+# --- NEW WARNING BLOCK ---
+
+# Create the block capital, red border warning
+echo
+echo -e "${RED}╔════════════════════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${RED}║${NC} ${RED}  ${RED}     ${NC}${RED}W A R N I N G:   C L O S E   A L L   W I N D O W S !${NC}                     ${RED}${NC} ${RED}║${NC}"
+echo -e "${RED}║${NC} ${RED}  ${RED}     ${NC}${RED}You must close all open windows before starting the script.${NC}         ${RED}${NC} ${RED}║${NC}"
+echo -e "${RED}║${NC} ${RED}  ${RED}     ${NC}${RED}Otherwise, your existing windows may be hidden behind the wallpaper.${NC} ${RED}${NC} ${RED}║${NC}"
+echo -e "${RED}╚════════════════════════════════════════════════════════════════════════════╝${NC}"
+echo
+
+# --- END NEW WARNING BLOCK ---
+
+
 if [ "$OPTIMIZER_INSTALLED_STATUS" == "yes" ]; then
     echo
     echo -e "${BLUE}What would you like to run now?${NC}"
@@ -760,7 +774,11 @@ if [ "$OPTIMIZER_INSTALLED_STATUS" == "yes" ]; then
     options=("Run Video Wallpapers" "Run Video Optimizer" "Exit")
     select action in "${options[@]}"; do
         case $REPLY in
-            1) echo -e "${GREEN}[+] Running video wallpapers: ${HELPER_SCRIPT_PATH}...${NC}"; "$HELPER_SCRIPT_PATH" & break;;
+            1) 
+                echo -e "${GREEN}[+] Running video wallpapers: ${HELPER_SCRIPT_PATH}...${NC}";
+                # The script will now rely on the user having read the warning above.
+                "$HELPER_SCRIPT_PATH" & 
+                break;;
             2) echo -e "${GREEN}[+] Running video optimizer: hyprland-video-optimizer...${NC}"; "$OPTIMIZER_BIN"; break;;
             3) echo -e "${YELLOW}[-] Exiting.${NC}"; exit 0;;
             *) echo -e "${RED}[!] Invalid selection, please try again.${NC}";;
@@ -772,6 +790,7 @@ else
 
     if [[ "${run_now,,}" != "n" ]]; then
         echo -e "${GREEN}[+] Running ${HELPER_SCRIPT_PATH}...${NC}"
+        # The script will now rely on the user having read the warning above.
         "$HELPER_SCRIPT_PATH" &
     else
         echo -e "${YELLOW}[-] Skipping execution. Remember to run it manually or add to autostart.${NC}"
