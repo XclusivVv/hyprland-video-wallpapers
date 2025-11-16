@@ -29,7 +29,7 @@ Use [hyprland-video-optimizer](https://github.com/XclusivVv/hyprland-video-optim
 ## ✨ Features
 
 ### 🎨 Multiple Wallpapers
-- Assign unique wallpapers to workspaces 1–10  
+- Assign unique wallpapers to workspaces 1–9
 - 50+ pre-optimized wallpapers included  
 - Automatic play/pause when switching  
 - Supports MP4 and MKV  
