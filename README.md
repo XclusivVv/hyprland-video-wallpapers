@@ -1,12 +1,16 @@
-# Hyprland Video Wallpapers
+![Centered Image](/assets/logo.png){: .center}
 
-**Per-workspace animated wallpapers with intelligent window management**
+<div align="center">
+  <h1>Per-workspace animated wallpapers with intelligent window management</h1>
+  
+  ![bash](https://img.shields.io/badge/Shell_Script-Bash-4EAA25?logo=gnu-bash&logoColor=white)
+  ![hyprland](https://img.shields.io/badge/Hyprland-Compatible-00A0FF?logo=wayland&logoColor=white)
+  ![mpv](https://img.shields.io/badge/MPV-Video_Backgrounds-6A0DAD)
+  ![license](https://img.shields.io/github/license/XclusivVv/hyprland-video-wallpapers)
+  ![lastcommit](https://img.shields.io/github/last-commit/XclusivVv/hyprland-video-wallpapers)
+</div>
 
-![bash](https://img.shields.io/badge/Shell_Script-Bash-4EAA25?logo=gnu-bash&logoColor=white)
-![hyprland](https://img.shields.io/badge/Hyprland-Compatible-00A0FF?logo=wayland&logoColor=white)
-![mpv](https://img.shields.io/badge/MPV-Video_Backgrounds-6A0DAD)
-![license](https://img.shields.io/github/license/XclusivVv/hyprland-video-wallpapers)
-![lastcommit](https://img.shields.io/github/last-commit/XclusivVv/hyprland-video-wallpapers)
+![Centered Image](/docs/preview/preview.gif){: .center}
 
 ---
 
