@@ -24,7 +24,7 @@
 
 ## Features
 
-HyprVideo includes a full **interactive installation wizard**:
+Includes a full **interactive installation wizard**:
 
 ### 🔧 Interactive Setup Wizard
 - Step-by-step guided installation
