@@ -1,6 +1,8 @@
 hyprland-video-wallpapers
 -------------------------
 
+![Preview](preview.gif)
+
 This is a small tool I wrote to make video wallpapers behave (sort of) properly on Hyprland.
 MPV does the video part, Hyprpaper handles images, and the script glues everything
 together per workspace. Nothing too fancy, just something that works the way I wanted.
@@ -38,10 +40,18 @@ Then run the script:
 Files it creates
 ----------------
 
-Config:        `~/.config/hyprland-video-wallpapers/`
-Rules:         `~/.config/hyprland-video-wallpapers/rules/hyprland-video-wallpapers.conf`
-Script:        `~/.local/bin/hyprland-video-wallpapers.sh`
-Thumbnails:    `~/.cache/hvw_thumbs/`
+Config:        
+`~/.config/hyprland-video-wallpapers/`
+
+Rules:         
+`~/.config/hyprland-video-wallpapers/rules/hyprland-video-wallpapers.conf`
+
+Script:        
+`~/.local/bin/hyprland-video-wallpapers.sh`
+
+Thumbnails:    
+`~/.cache/hvw_thumbs/`
+
 Hyprland:      Adds a couple `source=` lines + one `exec-once=` to hyprland.conf
 
 
